@@ -61,7 +61,7 @@ export default function Signup() {
       return;
     }
     try {
-      const response = await fetch("http://localhost:8081/users", {
+      const response = await fetch("https://ecommerce-1-ky2b.onrender.com/users", {
         method: "POST",
         headers: {
           "Content-Type": "Application/json",

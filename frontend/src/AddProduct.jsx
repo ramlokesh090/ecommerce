@@ -71,7 +71,7 @@ export default function Addproduct({ onBack }) {
         return;
     }
     try {
-      const response = await fetch("http://localhost:8081/products", {
+      const response = await fetch("https://ecommerce-1-ky2b.onrender.com/products", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
