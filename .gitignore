@@ -1,0 +1,29 @@
+# =========================
+# Frontend - React/Vite
+# =========================
+frontend/node_modules/
+frontend/dist/
+frontend/.firebase/
+
+# =========================
+# Backend - Spring Boot
+# =========================
+backend/target/
+
+# =========================
+# IntelliJ IDEA
+# =========================
+backend/.idea/
+*.iml
+
+# =========================
+# Environment / secrets
+# =========================
+.env
+frontend/.env
+backend/.env
+
+# =========================
+# Firebase debug
+# =========================
+firebase-debug.log
