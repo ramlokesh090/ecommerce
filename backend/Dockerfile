@@ -2,12 +2,8 @@ FROM eclipse-temurin:21-jdk
 
 WORKDIR /app
 
-COPY . .
+COPY target/Ecommerce-0.0.1-SNAPSHOT.jar app.jar
 
-RUN chmod +x mvnw
+EXPOSE 8081
 
-RUN ./mvnw clean package -DskipTests
-
-EXPOSE 10000
-
-CMD ["java", "-jar", "target/Ecommerce-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
