@@ -103,7 +103,7 @@ public class securityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(
-                List.of("http://localhost:5173")
+                List.of("http://localhost:5173","https://ramlokesh-ecommerce.web.app")
         );
 
         configuration.setAllowedMethods(
