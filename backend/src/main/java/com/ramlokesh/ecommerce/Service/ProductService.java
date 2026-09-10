@@ -50,6 +50,7 @@ public class ProductService {
         details.setCreatedBy(product.getCreatedBy());
         details.setDescription(product.getDescription());
         details.setShipping(product.getShipping());
+        details.setWarrenty(product.getWarrenty());
         productdetails savedproduct=repo.save(details);
         Long productId=savedproduct.getProductId();
         Long userId= savedproduct.getCreatedBy();

@@ -23,7 +23,9 @@ public class productdto {
     private String brand;
     private String category;
     private int shipping;
+    private String warrenty;
     private amountDto amount;
     private stockDto stock;
+
 
 }

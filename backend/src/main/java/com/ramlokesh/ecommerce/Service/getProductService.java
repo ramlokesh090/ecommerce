@@ -67,6 +67,7 @@ public class getProductService {
                       product.getBrand(),
                       product.getCategory(),
                       product.getShipping(),
+                      product.getWarrenty(),
                       amountMap.get(product.getProductId()),
                       stockMap.get(product.getProductId())
         );}).toList();
@@ -96,6 +97,7 @@ public class getProductService {
                 product.getBrand(),
                 product.getCategory(),
                 product.getShipping(),
+                product.getWarrenty(),
                 new amountDto(
                         amount.getPrice(),
                         amount.getDiscount()
@@ -140,6 +142,7 @@ public class getProductService {
                                 prod.getBrand(),
                                 prod.getCategory(),
                                 prod.getShipping(),
+                                prod.getWarrenty(),
                                 amountMap.get(prod.getProductId()),
                                 stockMap.get(prod.getProductId())
                         )

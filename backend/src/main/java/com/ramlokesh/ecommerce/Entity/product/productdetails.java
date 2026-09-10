@@ -23,4 +23,5 @@ public class productdetails {
     private String brand;
     private String category;
     private Long createdBy;
+    private String warrenty;
 }
