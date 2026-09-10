@@ -1,8 +1,10 @@
 package com.ramlokesh.ecommerce.Service;
 
+import com.ramlokesh.ecommerce.Entity.product.ProductImage;
 import com.ramlokesh.ecommerce.Entity.product.productAmount;
 import com.ramlokesh.ecommerce.Entity.product.productStock;
 import com.ramlokesh.ecommerce.Entity.product.productdetails;
+import com.ramlokesh.ecommerce.Repository.products.ProductImageRepo;
 import com.ramlokesh.ecommerce.Repository.products.productAmountRepo;
 import com.ramlokesh.ecommerce.Repository.products.productStockrepo;
 import com.ramlokesh.ecommerce.Repository.products.productsRepo;
@@ -13,10 +15,7 @@ import com.ramlokesh.ecommerce.exception.ProductNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,11 +26,13 @@ public class getProductService {
     productsRepo repo;
     @Autowired
     productStockrepo stockRepo;
-
+    @Autowired
+    ProductImageRepo imageRepo;
     public List<productdto> getAllproducts() {
         List<productdetails> products=repo.findAll();
         List<productAmount> amount=amountRepo.findAll();
         List<productStock> stock= stockRepo.findAll();
+        List<ProductImage> Image= imageRepo.findAll();
         Map<Long, amountDto> amountMap= amount.stream()
                 .collect(Collectors.toMap(
                         amt->(amt.getProductId()),
@@ -40,6 +41,11 @@ public class getProductService {
                                 amt.getDiscount()
                         )
                 )));
+        Map<Long, ProductImage> ImageMap= Image.stream()
+                .collect(Collectors.toMap(
+                        img->(img.getProductId()),
+                        img->(img
+                        )));
         Map<Long, stockDto> stockMap = stock.stream()
                 .collect(Collectors.toMap(
                         productStock::getProductId,
@@ -49,19 +55,21 @@ public class getProductService {
                         )
                         )));
         return products.stream()
-               .map(product->
-                new productdto(
+               .map(product->{
+                return new productdto(
                       product.getProductId(),
                       product.getCreatedBy(),
                       product.getProductName(),
                       product.getDescription(),
-                      product.getImageurl(),
+                        Base64.getEncoder().encodeToString(ImageMap.get(product.getProductId()).getImageData()),
+                        ImageMap.get(product.getProductId()).getContentType(),
                       product.getWeight(),
                       product.getBrand(),
                       product.getCategory(),
+                      product.getShipping(),
                       amountMap.get(product.getProductId()),
                       stockMap.get(product.getProductId())
-        )).toList();
+        );}).toList();
     }
 
     public productdto getproductbyId( Long Id) {
@@ -74,16 +82,20 @@ public class getProductService {
         productStock stock= stockRepo.findById(Id).orElseThrow(()->
                  new ProductNotFound("product not found")
         );
-
+        ProductImage Image=imageRepo.findById(Id).orElseThrow(()->
+                new ProductNotFound("Product not Found")
+                );
         return new productdto(
                 product.getProductId(),
                 product.getCreatedBy(),
                 product.getProductName(),
                 product.getDescription(),
-                product.getImageurl(),
+                Base64.getEncoder().encodeToString(Image.getImageData()),
+                Image.getContentType(),
                 product.getWeight(),
                 product.getBrand(),
                 product.getCategory(),
+                product.getShipping(),
                 new amountDto(
                         amount.getPrice(),
                         amount.getDiscount()
@@ -110,6 +122,11 @@ public class getProductService {
                         productStock::getProductId,
                         stk->new stockDto(stk.getTotalstock(),stk.getCapacity())
                 ));
+        Map<Long, ProductImage> ImageMap= imageRepo.findAllById(productIds).stream()
+                .collect(Collectors.toMap(
+                        img->(img.getProductId()),
+                        img->(img
+                        )));
         return product.stream()
                 .map(prod->
                         new productdto(
@@ -117,10 +134,12 @@ public class getProductService {
                                 prod.getCreatedBy(),
                                 prod.getProductName(),
                                 prod.getDescription(),
-                                prod.getImageurl(),
+                                Base64.getEncoder().encodeToString(ImageMap.get(prod.getProductId()).getImageData()),
+                                ImageMap.get(prod.getProductId()).getContentType(),
                                 prod.getWeight(),
                                 prod.getBrand(),
                                 prod.getCategory(),
+                                prod.getShipping(),
                                 amountMap.get(prod.getProductId()),
                                 stockMap.get(prod.getProductId())
                         )

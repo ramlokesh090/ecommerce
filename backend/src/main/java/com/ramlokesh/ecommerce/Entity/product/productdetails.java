@@ -18,7 +18,7 @@ public class productdetails {
     private Long productId;
     private String productName;
     private String description;
-    private String imageurl;
+    private int shipping;
     private int weight;
     private String brand;
     private String category;

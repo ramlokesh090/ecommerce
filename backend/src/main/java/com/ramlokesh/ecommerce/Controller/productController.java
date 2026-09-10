@@ -9,9 +9,12 @@ import com.ramlokesh.ecommerce.dto.Addproduct.productdto;
 import com.ramlokesh.ecommerce.exception.ProductNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -26,9 +29,9 @@ public class productController {
     @Autowired
     getProductService getService;
 
-    @PostMapping("/products")
-    public ResponseEntity<?> Addproduct(@RequestBody productdto product){
-            AddProductresponse response = service.Addproduct(product);
+    @PostMapping(value="/products",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> Addproduct(@ModelAttribute  productdto product, @RequestPart MultipartFile image) throws IOException {
+            AddProductresponse response = service.Addproduct(product,image);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     @GetMapping("/products")
@@ -57,10 +60,10 @@ public class productController {
 //                .status(HttpStatus.NOT_FOUND)
 //                .body(e.getMessage());
 //    }
-    @PutMapping("/products")
-    public ResponseEntity<?> Updateproduct(@RequestBody productdto product){
+    @PutMapping(value="/products",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> Updateproduct(@ModelAttribute  productdto product, @RequestPart MultipartFile image){
         try {
-            AddProductresponse response = service.Addproduct(product);
+            AddProductresponse response = service.Addproduct(product,image);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
         }
         catch(Exception e){

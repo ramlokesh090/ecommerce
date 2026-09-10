@@ -16,10 +16,14 @@ public class productdto {
     private Long createdBy;
     private String productName;
     private String description;
-    private String imageUrl;
+//    private String image;
+    private String image;
+    private String contentType;
     private int weight;
     private String brand;
     private String category;
+    private int shipping;
     private amountDto amount;
     private stockDto stock;
+
 }
