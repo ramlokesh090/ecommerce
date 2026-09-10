@@ -1,96 +1,371 @@
 import { useState } from "react";
+import "./css/cartitems.css";
+
 function Def({ name, value }) {
   return (
-    <p style={{ fontWeight: 600, color: "blue" }}>
-      {name}:<span style={{ margin: 5, color: "white" }}>{value}</span>
-    </p>
-  );
-}
-function Cartcard({ item, remove }) {
-  const discountrate =
-    item.price - Math.floor((item.price * item.discountPercentage) / 100);
-  return (
-    <div className="cart">
-      <div className="card1">
-        <div style={{ flexDirection: "row", display: "flex", gap: "20px" }}>
-          <div>
-            <img src={item.images[0]} height={100} width={100} />
-            <p style={{ color: "indigo", fontWeight: 800 }}>{item.title}</p>
-          </div>
-        </div>
-        <div style={{ margin: 20 }}>
-          {item.discountPercentage > 0 && (
-            <p style={{ fontWeight: 600, color: "blue" }}>
-              Price:<s style={{ margin: 5, color: "red" }}>${item.price}</s>
-              <span style={{ margin: 8, color: "white" }}>${discountrate.toFixed(2)}</span>
-            </p>
-          )}
-          {item.discountPercentage === 0 && (
-            <p style={{ fontWeight: 600, color: "blue" }}>
-              Price:
-              <span style={{ margin: 5, color: "white" }}>${item.price}</span>
-            </p>
-          )}
-          <Def name="Warrenty" value={item.warrantyInformation} />
-          <Def name="Rating" value={`${item.rating}`} />
-          <Def name="Weight" value={`${item.weight}`} />
-        </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <button
-            style={{ color: "red", padding: "5px", fontWeight: 700 }}
-            onClick={() => remove(item)}
-          >
-            remove
-          </button>
-        </div>
-      </div>
+    <div className="cart-detail-row">
+      <span className="cart-detail-label">{name}</span>
+      <span className="cart-detail-value">{value}</span>
     </div>
   );
 }
-export default function Cartitems({ items, onBack, removefromcart,onBuy }) {
-    let sum=0
-    for(const item of items){
-        const price=item.price-Math.floor((item.price * item.discountPercentage) / 100);
-        sum+=price;
-    }
+
+function Cartcard({ item, remove }) {
+  const discountrate =
+    item.price - Math.floor((item.price * item.discountPercentage) / 100);
+
   return (
-    <div>
-      <div>
+    <article className="cart-product-card">
+      {/* Product Image */}
+      <div className="cart-product-image-wrapper">
+        <img
+          src={item.images[0]}
+          alt={item.title}
+          className="cart-product-image"
+          loading="lazy"
+        />
+      </div>
+
+      {/* Product Information */}
+      <div className="cart-product-main">
+        <div className="cart-product-heading">
+          <span className="cart-product-category">
+            {item.category}
+          </span>
+
+          <h2 className="cart-product-title">
+            {item.title}
+          </h2>
+        </div>
+
+        {/* Price */}
+        <div className="cart-price-section">
+          {item.discountPercentage > 0 ? (
+            <>
+              <span className="cart-price-label">Price</span>
+
+              <span className="cart-old-price">
+                ${item.price}
+              </span>
+
+              <span className="cart-current-price">
+                ${discountrate.toFixed(2)}
+              </span>
+
+              <span className="cart-discount">
+                {item.discountPercentage}% OFF
+              </span>
+            </>
+          ) : (
+            <>
+              <span className="cart-price-label">Price</span>
+
+              <span className="cart-current-price">
+                ${item.price}
+              </span>
+            </>
+          )}
+        </div>
+
+        {/* Product Details */}
+        <div className="cart-details-grid">
+          <Def
+            name="Warranty"
+            value={item.warrantyInformation}
+          />
+
+          <Def
+            name="Rating"
+            value={`${item.rating}`}
+          />
+
+          <Def
+            name="Weight"
+            value={`${item.weight}`}
+          />
+        </div>
+      </div>
+
+      {/* Remove */}
+      <div className="cart-product-actions">
         <button
-          onClick={onBack}
-          style={{ display: "flex", justifyContent: "flex-start", margin: "10px 10px 10px auto",color:"white",backgroundColor:"blue",padding:"10px" }}
+          className="remove-cart-button"
+          onClick={() => remove(item)}
+          type="button"
         >
-          Back
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+          >
+            <path
+              d="M3 6H21"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+            />
+
+            <path
+              d="M8 6V4.5C8 3.67 8.67 3 9.5 3H14.5C15.33 3 16 3.67 16 4.5V6"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+            />
+
+            <path
+              d="M19 6L18.3 20.3C18.26 21.25 17.48 22 16.53 22H7.47C6.52 22 5.74 21.25 5.7 20.3L5 6"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+
+            <path
+              d="M10 10V18"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+            />
+
+            <path
+              d="M14 10V18"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+            />
+          </svg>
+
+          <span>Remove</span>
         </button>
       </div>
-      <div>
-        {items.map((item) => (
-          <div style={{ marginBottom: "10   px" }}>
-            <Cartcard key={item.id} item={item} remove={removefromcart} />
+    </article>
+  );
+}
+
+export default function Cartitems({
+  items,
+  onBack,
+  removefromcart,
+  onBuy,
+}) {
+  let sum = 0;
+
+  for (const item of items) {
+    const price =
+      item.price -
+      Math.floor(
+        (item.price * item.discountPercentage) / 100
+      );
+
+    sum += price;
+  }
+
+  return (
+    <div className="cart-page">
+      {/* Background decoration */}
+      <div className="cart-background-glow cart-glow-one"></div>
+      <div className="cart-background-glow cart-glow-two"></div>
+
+      <div className="cart-container">
+
+        {/* Header */}
+        <header className="cart-header">
+
+          <div className="cart-header-left">
+            <button
+              className="cart-back-button"
+              onClick={onBack}
+              type="button"
+              aria-label="Back to products"
+            >
+              <svg
+                width="19"
+                height="19"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path
+                  d="M19 12H5"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                />
+
+                <path
+                  d="M12 19L5 12L12 5"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+
+              <span>Back</span>
+            </button>
           </div>
-        ))}
-      </div>
-      <div>
-        <p style={{margin:10,color:"green",fontWeight:800}}>Total Bill:{sum.toFixed(2)}</p>
-        <button
-          style={{
-            padding: "5px",
-            fontSize: "20px",
-            color: "white",
-            backgroundColor: "blue",
-            marginBottom: "10px",
-            marginTop: "10px",
-          }}
-          onClick={onBuy}
-        >
-          Buy
-        </button>
+
+          <div className="cart-header-title">
+            <div className="cart-title-icon">
+              <svg
+                width="23"
+                height="23"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path
+                  d="M3 4H5L7.2 15.2C7.4 16.2 8.28 17 9.3 17H17.5C18.45 17 19.28 16.34 19.48 15.42L21 8H6"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+
+                <circle
+                  cx="10"
+                  cy="20"
+                  r="1.2"
+                  fill="currentColor"
+                />
+
+                <circle
+                  cx="17"
+                  cy="20"
+                  r="1.2"
+                  fill="currentColor"
+                />
+              </svg>
+            </div>
+
+            <div>
+              <h1>Your Cart</h1>
+              <p>
+                {items.length}{" "}
+                {items.length === 1 ? "item" : "items"} selected
+              </p>
+            </div>
+          </div>
+
+          <div className="cart-item-count">
+            {items.length}
+          </div>
+        </header>
+
+        {/* Cart Products */}
+        <main className="cart-content">
+          <section className="cart-products-section">
+            {items.map((item) => (
+              <Cartcard
+                key={item.id}
+                item={item}
+                remove={removefromcart}
+              />
+            ))}
+          </section>
+
+          {/* Summary */}
+          <aside className="cart-summary">
+            <div className="summary-heading">
+              <span>Order Summary</span>
+            </div>
+
+            <div className="summary-line">
+              <span>Items</span>
+              <span>{items.length}</span>
+            </div>
+
+            <div className="summary-line">
+              <span>Subtotal</span>
+              <span>${sum.toFixed(2)}</span>
+            </div>
+
+            <div className="summary-line">
+              <span>Shipping</span>
+              <span className="free-shipping">
+                FREE
+              </span>
+            </div>
+
+            <div className="summary-divider"></div>
+
+            <div className="summary-total">
+              <div>
+                <span>Total</span>
+                <small>Including applicable discounts</small>
+              </div>
+
+              <strong>
+                ${sum.toFixed(2)}
+              </strong>
+            </div>
+
+            <button
+              className="checkout-button"
+              onClick={onBuy}
+              type="button"
+            >
+              <span>Proceed to Buy</span>
+
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path
+                  d="M5 12H19"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                />
+
+                <path
+                  d="M13 6L19 12L13 18"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+
+            <div className="secure-checkout">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path
+                  d="M7 10V7.5C7 4.74 9.24 2.5 12 2.5C14.76 2.5 17 4.74 17 7.5V10"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                />
+
+                <rect
+                  x="4"
+                  y="10"
+                  width="16"
+                  height="11"
+                  rx="2"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                />
+
+                <circle
+                  cx="12"
+                  cy="15.5"
+                  r="1.2"
+                  fill="currentColor"
+                />
+              </svg>
+
+              Secure checkout
+            </div>
+          </aside>
+        </main>
+
       </div>
     </div>
   );

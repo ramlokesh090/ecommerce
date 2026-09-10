@@ -1,7 +1,8 @@
 import { useState } from "react";
-import "./App.css";
+import "./css/signup.css";
 import { useNavigate } from "react-router-dom";
 import Header from "./header";
+
 export default function Signup() {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
@@ -11,221 +12,365 @@ export default function Signup() {
   const [role, setRole] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
+
   const roles = [
     { id: "user", value: "User" },
     { id: "admin", value: "Admin" },
   ];
-  const [errors, setErrors] = useState({});
+
   const validateForm = () => {
     const newErrors = {};
+
     if (!firstname.trim()) {
       newErrors.firstname = "First name is required";
     }
+
     if (!lastname.trim()) {
-      newErrors.lastname = "last name is required";
+      newErrors.lastname = "Last name is required";
     }
+
     if (!email.trim()) {
       newErrors.email = "Email is required";
-    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email)) {
-      newErrors.email = "please enter valid email address";
+    } else if (
+      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email)
+    ) {
+      newErrors.email = "Please enter valid email address";
     }
+
     if (!phone.trim()) {
-      newErrors.phone = "phone number is required";
+      newErrors.phone = "Phone number is required";
     } else if (!/^\d{10}$/.test(phone)) {
-      newErrors.phone = "please enter 10 digits number";
+      newErrors.phone = "Please enter 10 digits number";
     }
+
     if (!role) {
       newErrors.role = "Role is required";
     }
+
     if (!password.trim()) {
-      newErrors.password = "password is required";
+      newErrors.password = "Password is required";
     } else if (
-      [
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$\.!%*?&]{8,}$/,
-      ].every((pattern) => !pattern.test(password))
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$\.!%*?&]{8,}$/.test(
+        password
+      )
     ) {
       newErrors.password =
-        "please enter atleast one uppercase,lowercase,special character,>8 characters";
+        "Use uppercase, lowercase, number, special character and 8+ characters";
     }
+
     if (!confirmPassword.trim()) {
       newErrors.confirmpassword = "Confirm password is required";
     } else if (confirmPassword !== password) {
-      newErrors.confirmpassword = "password should match confirm password";
+      newErrors.confirmpassword =
+        "Password should match confirm password";
     }
+
     setErrors(newErrors);
+
     return Object.keys(newErrors).length === 0;
   };
+
   const handleSignup = async () => {
     if (!validateForm()) {
       return;
     }
+
+    setLoading(true);
+
     try {
-      const response = await fetch("https://ecommerce-1-ky2b.onrender.com/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "Application/json",
-        },
-        body: JSON.stringify({
-          firstName: firstname,
-          middleName: middlename,
-          lastName: lastname,
-          phoneNumber: phone,
-          role: role,
-          password: password,
-          confirmPassword: confirmPassword,
-          email:email
-        }),
-      });
+      const response = await fetch(
+        "https://ecommerce-1-ky2b.onrender.com/users",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "Application/json",
+          },
+          body: JSON.stringify({
+            firstName: firstname,
+            middleName: middlename,
+            lastName: lastname,
+            phoneNumber: phone,
+            role: role,
+            password: password,
+            confirmPassword: confirmPassword,
+            email: email,
+          }),
+        }
+      );
+
       const result = await response.json();
+
       if (result.statuscode !== 201) {
-        alert("signup failed");
+        setLoading(false);
+        alert(result.Message);
       } else {
+        setLoading(false);
         alert(result.Message);
         navigate("/login");
       }
     } catch (error) {
+      setLoading(false);
       alert(error);
     }
   };
+
   return (
-    <div style={{backgroundColor: "#F1F5F9"}}>
-      <div>
-        <Header/>
-      </div>
-      <div
-        style={{
-          width: "500px",
-          background: "#10B981",
-          color: "white",
-          padding: "25px",
-          margin: "20px auto",
-          //   display: "flex",
-          //   justifyContent: "center",
-          //   alignSelf: "center",
-          textAlign: "center",
-          borderRadius: "8px",
-          fontSize: "36px",
-          fontWeight: "600",
-        }}
-      >
-        <p>Welcome Sign Up Page</p>
-      </div>
-      <div className="signup">
-        <div className="form">
-          <label>
-            <span style={{ color: "red" }}>*</span>First Name
-          </label>
-          <input
-            placeholder="First Name"
-            value={firstname}
-            onChange={(e) => setFirstname(e.target.value)}
-          />
-          {errors.firstname && <p className="errors">{errors.firstname}</p>}
+    <div className="signup-page">
+      <Header />
+
+      <main className="signup-container">
+        <section className="signup-card">
+
+          {/* Header */}
+          <div className="signup-heading">
+            <div className="signup-logo">
+              <span>EC</span>
+            </div>
+
+            <div>
+              <p className="signup-eyebrow">ACCOUNT REGISTRATION</p>
+              <h1>Create your account</h1>
+              <p className="signup-subtitle">
+                Enter your details to continue.
+              </p>
+            </div>
+          </div>
+
+          {/* Form */}
+          <div className="signup-form">
+
+            <div className="form-row">
+
+              <div className="form">
+                <label>
+                  <span>*</span>
+                  First Name
+                </label>
+
+                <input
+                  placeholder="First name"
+                  value={firstname}
+                  onChange={(e) => setFirstname(e.target.value)}
+                  disabled={loading}
+                />
+
+                {errors.firstname && (
+                  <p className="errors">{errors.firstname}</p>
+                )}
+              </div>
+
+              <div className="form">
+                <label>Middle Name</label>
+
+                <input
+                  placeholder="Middle name"
+                  value={middlename}
+                  onChange={(e) => setMiddlename(e.target.value)}
+                  disabled={loading}
+                />
+              </div>
+
+            </div>
+
+            <div className="form-row">
+
+              <div className="form">
+                <label>
+                  <span>*</span>
+                  Last Name
+                </label>
+
+                <input
+                  placeholder="Last name"
+                  value={lastname}
+                  onChange={(e) => setLastname(e.target.value)}
+                  disabled={loading}
+                />
+
+                {errors.lastname && (
+                  <p className="errors">{errors.lastname}</p>
+                )}
+              </div>
+
+              <div className="form">
+                <label>
+                  <span>*</span>
+                  Email
+                </label>
+
+                <input
+                  type="email"
+                  placeholder="name@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={loading}
+                />
+
+                {errors.email && (
+                  <p className="errors">{errors.email}</p>
+                )}
+              </div>
+
+            </div>
+
+            <div className="form-row">
+
+              <div className="form">
+                <label>
+                  <span>*</span>
+                  Phone Number
+                </label>
+
+                <input
+                  type="tel"
+                  placeholder="10 digit phone number"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  disabled={loading}
+                />
+
+                {errors.phone && (
+                  <p className="errors">{errors.phone}</p>
+                )}
+              </div>
+
+              <div className="form">
+                <label>
+                  <span>*</span>
+                  Role
+                </label>
+
+                <select
+                  value={role || ""}
+                  onChange={(e) => setRole(e.target.value)}
+                  disabled={loading}
+                >
+                  <option value="">Select role</option>
+
+                  {roles.map((role) => (
+                    <option key={role.id} value={role.value}>
+                      {role.value}
+                    </option>
+                  ))}
+                </select>
+
+                {errors.role && (
+                  <p className="errors">{errors.role}</p>
+                )}
+              </div>
+
+            </div>
+
+            <div className="form-row">
+
+              <div className="form">
+                <label>
+                  <span>*</span>
+                  Password
+                </label>
+
+                <input
+                  type="password"
+                  placeholder="Create password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={loading}
+                />
+
+                {errors.password && (
+                  <p className="errors">{errors.password}</p>
+                )}
+              </div>
+
+              <div className="form">
+                <label>
+                  <span>*</span>
+                  Confirm Password
+                </label>
+
+                <input
+                  type="password"
+                  placeholder="Confirm password"
+                  value={confirmPassword}
+                  onChange={(e) =>
+                    setConfirmPassword(e.target.value)
+                  }
+                  disabled={loading}
+                />
+
+                {errors.confirmpassword && (
+                  <p className="errors">
+                    {errors.confirmpassword}
+                  </p>
+                )}
+              </div>
+
+            </div>
+
+            {/* Signup Button */}
+            <button
+              className={`signup-button ${
+                loading ? "signup-loading" : ""
+              }`}
+              onClick={handleSignup}
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <span className="spinner"></span>
+                  <span>Creating account...</span>
+                </>
+              ) : (
+                <>
+                  <span>Create Account</span>
+                  <span className="signup-arrow">→</span>
+                </>
+              )}
+            </button>
+
+            {/* Login */}
+            <div className="signup-login">
+              <span>Already have an account?</span>
+
+              <button
+                type="button"
+                onClick={() => navigate("/login")}
+                disabled={loading}
+              >
+                Sign in
+              </button>
+            </div>
+
+          </div>
+        </section>
+      </main>
+
+      {/* Loading Overlay */}
+      {loading && (
+        <div className="signup-loading-overlay">
+          <div className="loading-modal">
+
+            <div className="loading-spinner"></div>
+
+            <h3>Creating your account</h3>
+
+            <p>
+              Please wait while we securely process your
+              registration.
+            </p>
+
+            <div className="loading-progress">
+              <span></span>
+            </div>
+
+          </div>
         </div>
-        <div className="form">
-          <label>Middle Name</label>
-          <input
-            placeholder="Middle name"
-            value={middlename}
-            onChange={(e) => setMiddlename(e.target.value)}
-          />
-        </div>
-        <div className="form">
-          <label>
-            <span style={{ color: "red" }}>*</span>Last Name
-          </label>
-          <input
-            placeholder="Last Name"
-            value={lastname}
-            onChange={(e) => setLastname(e.target.value)}
-          />
-          {errors.lastname && <p className="errors">{errors.lastname}</p>}
-        </div>
-        <div className="form">
-          <label>
-            <span style={{ color: "red" }}>*</span>Email Id
-          </label>
-          <input
-            type="email"
-            placeholder="Email Id"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          {errors.email && <p className="errors">{errors.email}</p>}
-        </div>
-        <div className="form">
-          <label>
-            <span style={{ color: "red" }}>*</span>Phone Number
-          </label>
-          <input
-            type="tel"
-            placeholder="PhoneNumber"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-          />
-          {errors.phone && <p className="errors">{errors.phone}</p>}
-        </div>
-        <div className="form">
-          <label>
-            <span style={{ color: "red" }}>*</span>Role
-          </label>
-          <select value={role || ""} onChange={(e) => setRole(e.target.value)}>
-            <option value="">Select a role</option>
-            {roles.map((role) => (
-              <option key={role.id} value={role.value}>
-                {role.value}
-              </option>
-            ))}
-          </select>
-          {errors.role && <p className="errors">{errors.role}</p>}
-        </div>
-        <div className="form">
-          <label>
-            <span style={{ color: "red" }}>*</span>Password
-          </label>
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          {errors.password && <p className="errors">{errors.password}</p>}
-        </div>
-        <div className="form">
-          <label>
-            <span style={{ color: "red" }}>*</span>Confirm Password
-          </label>
-          <input
-            type="password"
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-          {errors.confirmpassword && (
-            <p className="errors">{errors.confirmpassword}</p>
-          )}
-        </div>
-        <div className="button-position">
-          <button className="button" onClick={handleSignup}>
-            Sign Up
-          </button>
-        </div>
-        <div
-          className="button-position"
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: "5px",
-          }}
-        >
-          Already have an account?
-          <a href="/login">
-            <p style={{ fontWeight: "bold" }}>Login</p>
-          </a>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

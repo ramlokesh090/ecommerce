@@ -1,0 +1,480 @@
+/* =========================================================
+   ADD PRODUCT - ENTERPRISE UI
+   ========================================================= */
+
+.add-product-page {
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 42px 24px 70px;
+
+  background:
+    radial-gradient(
+      circle at 10% 0%,
+      rgba(37, 99, 235, 0.07),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 90% 10%,
+      rgba(14, 165, 233, 0.06),
+      transparent 28%
+    ),
+    #f8fafc;
+
+  color: #0f172a;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.add-product-header {
+  width: min(1050px, 100%);
+  margin: 0 auto 24px;
+}
+
+.add-product-eyebrow {
+  display: inline-block;
+
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+
+  color: #2563eb;
+
+  margin-bottom: 8px;
+}
+
+.add-product-title {
+  margin: 0;
+
+  font-size: clamp(28px, 4vw, 38px);
+  line-height: 1.1;
+
+  font-weight: 800;
+  letter-spacing: -0.03em;
+
+  color: #0f172a;
+}
+
+.add-product-subtitle {
+  margin: 8px 0 0;
+
+  color: #64748b;
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   FORM CONTAINER
+   ========================================================= */
+
+.AddProduct {
+  width: min(1050px, 100%);
+  margin: 0 auto;
+
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 22px 24px;
+
+  padding: 32px;
+
+  background: rgba(255, 255, 255, 0.96);
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 20px;
+
+  box-shadow:
+    0 20px 50px rgba(15, 23, 42, 0.06),
+    0 2px 8px rgba(15, 23, 42, 0.03);
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   FORM FIELD
+   ========================================================= */
+
+.field {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.field label {
+  margin-bottom: 8px;
+
+  color: #334155;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  letter-spacing: 0.01em;
+}
+
+.field label span {
+  color: #ef4444;
+  margin-right: 4px;
+}
+
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  border: 1px solid #cbd5e1;
+
+  background: #ffffff;
+
+  color: #0f172a;
+
+  border-radius: 10px;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  outline: none;
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease;
+
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+}
+
+.field input,
+.field select {
+  height: 46px;
+
+  padding: 0 13px;
+}
+
+.field textarea {
+  min-height: 112px;
+
+  padding: 13px;
+
+  resize: vertical;
+
+  line-height: 1.5;
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: #94a3b8;
+}
+
+
+/* =========================================================
+   FOCUS
+   ========================================================= */
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.10);
+
+  background: #ffffff;
+}
+
+
+/* =========================================================
+   HOVER
+   ========================================================= */
+
+.field input:hover,
+.field select:hover,
+.field textarea:hover {
+  border-color: #94a3b8;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+   ========================================================= */
+
+.field-position {
+  grid-column: 1 / -1;
+}
+
+
+/* =========================================================
+   ERRORS
+   ========================================================= */
+
+.errors {
+  margin: 6px 0 0;
+
+  color: #dc2626;
+
+  font-size: 12px;
+  font-weight: 500;
+
+  line-height: 1.4;
+}
+
+
+/* =========================================================
+   ACTION AREA
+   ========================================================= */
+
+.add-product-actions {
+  grid-column: 1 / -1;
+
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  padding-top: 18px;
+
+  border-top: 1px solid #e2e8f0;
+
+  margin-top: 4px;
+}
+
+
+/* =========================================================
+   SUBMIT BUTTON
+   ========================================================= */
+
+.button1 {
+  width: 180px;
+  min-width: 180px;
+  height: 46px;
+
+  padding: 0 20px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  font-family: inherit;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  box-shadow:
+    0 8px 18px rgba(37, 99, 235, 0.18);
+
+  transition:
+    transform 0.18s ease,
+    background-color 0.18s ease,
+    box-shadow 0.18s ease,
+    opacity 0.18s ease;
+}
+
+
+/* =========================================================
+   BUTTON HOVER
+   ========================================================= */
+
+.button1:hover:not(:disabled) {
+  background: #1d4ed8;
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 10px 22px rgba(37, 99, 235, 0.24);
+}
+
+
+/* =========================================================
+   BUTTON ACTIVE
+   ========================================================= */
+
+.button1:active:not(:disabled) {
+  transform: translateY(0);
+
+  box-shadow:
+    0 5px 12px rgba(37, 99, 235, 0.18);
+}
+
+
+/* =========================================================
+   BUTTON FOCUS
+   ========================================================= */
+
+.button1:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.20);
+
+  outline-offset: 2px;
+}
+
+
+/* =========================================================
+   DISABLED / LOADING BUTTON
+   ========================================================= */
+
+.button1:disabled {
+  cursor: not-allowed;
+
+  opacity: 0.75;
+
+  transform: none;
+
+  box-shadow:
+    0 5px 12px rgba(37, 99, 235, 0.12);
+}
+
+
+/* =========================================================
+   LOADING SPINNER
+   ========================================================= */
+
+.submit-spinner {
+  width: 17px;
+  height: 17px;
+
+  flex-shrink: 0;
+
+  border: 2px solid rgba(255, 255, 255, 0.35);
+
+  border-top: 2px solid #ffffff;
+
+  border-radius: 50%;
+
+  display: inline-block;
+
+  animation: product-loading-spin 0.7s linear infinite;
+}
+
+
+@keyframes product-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+  .add-product-page {
+    padding: 30px 18px 50px;
+  }
+
+  .AddProduct {
+    padding: 26px;
+
+    gap: 20px;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  .add-product-page {
+    padding: 24px 14px 40px;
+  }
+
+  .add-product-header {
+    margin-bottom: 18px;
+  }
+
+  .add-product-title {
+    font-size: 28px;
+  }
+
+  .add-product-subtitle {
+    font-size: 13px;
+  }
+
+  .AddProduct {
+    grid-template-columns: 1fr;
+
+    padding: 20px 17px;
+
+    gap: 18px;
+
+    border-radius: 16px;
+  }
+
+  .field-position {
+    grid-column: auto;
+  }
+
+  .add-product-actions {
+    grid-column: auto;
+
+    justify-content: center;
+
+    padding-top: 18px;
+  }
+
+  .button1 {
+    width: 180px;
+    min-width: 180px;
+  }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+  .add-product-page {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .AddProduct {
+    padding: 17px 14px;
+  }
+
+  .field input,
+  .field select {
+    height: 44px;
+  }
+
+  .field textarea {
+    min-height: 100px;
+  }
+
+  .button1 {
+    width: 170px;
+    min-width: 170px;
+  }
+
+}

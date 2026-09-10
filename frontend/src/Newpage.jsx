@@ -2,8 +2,9 @@ import { useState, useEffect, lazy } from "react";
 import Productdetails from "./Newpage1";
 import Cartitems from "./cartitems";
 import Todolist from "./Buyingpage";
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 import Header from "./header";
+import "./css/newpage.css";
 export default function Newpage() {
   const [products, setproducts] = useState([]);
   const [search, setSearch] = useState("");
@@ -11,188 +12,370 @@ export default function Newpage() {
   const [renderpage, setRenderpage] = useState("first");
   const [selectedproduct, setSelectedProduct] = useState();
   const [cart, setCart] = useState([]);
+
   const rowperpage = 9;
+
   const lastindex = currentPage * rowperpage;
   const firstindex = lastindex - rowperpage;
-  const {userId,role} = useSelector((state)=>state.user);
+
+  const { userId, role } = useSelector((state) => state.user);
+
   useEffect(() => {
     const getusers = async () => {
       const response = await fetch("https://dummyjson.com/products");
       const data = await response.json();
       setproducts(data.products);
     };
+
     getusers();
   }, []);
+
   const filtereditems = products.filter((product) => {
     return (
       product.title.toLowerCase().includes(search.toLowerCase()) ||
       product.price.toString().includes(search.toLowerCase())
     );
   });
+
   const pageproducts = filtereditems.slice(firstindex, lastindex);
+
   const totalpages = Math.ceil(filtereditems.length / rowperpage);
-  //  for(let i=0;i<=totalpages;i++){
-  //   buttons.push(<button key={i} onClick={()=>setCurrentPage(i)}>{i}</button>)
-  // }
+
   const removefromcart = (product) => {
     const updateCart = cart.filter((item) => item.id !== product.id);
     setCart(updateCart);
   };
+
   useEffect(() => {
     if (cart.length === 0) {
       setRenderpage("first");
     }
   }, [cart]);
+
   return (
     <>
-    {/* <div>
-      <Header/>
-    </div> */}
       {renderpage === "first" && (
-        <div>
-          <div
-            style={{
-              display: "flex",
-              marginTop: "10px",
-              marginBottom: "40px",
-              justifyContent: "space-between",
-              alignItems: "center",
-              flexDirection: "row",
-              backgroundColor:"#123456"
-            }}
-          >
-            <div style={{ display: "flex", gap: "20px", margin: 30 }}>
-              <p>Search :</p>
-              <input
-                value={search}
-                placeholder="search here"
-                onChange={(e) => {
-                  (setSearch(e.target.value), setCurrentPage(1));
-                }}
-              />
+        <div className="products-page">
+
+          {/* =========================
+              TOP CONTROL BAR
+          ========================= */}
+
+          <div className="products-toolbar">
+
+            <div className="search-section">
+              <label htmlFor="product-search">
+                Search products
+              </label>
+
+              <div className="search-box">
+                <svg
+                  width="19"
+                  height="19"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <circle
+                    cx="11"
+                    cy="11"
+                    r="7"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                  />
+
+                  <path
+                    d="M16.5 16.5L21 21"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  />
+                </svg>
+
+                <input
+                  id="product-search"
+                  value={search}
+                  placeholder="Search by product or price"
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                />
+
+                {search && (
+                  <button
+                    className="clear-search"
+                    onClick={() => {
+                      setSearch("");
+                      setCurrentPage(1);
+                    }}
+                    aria-label="Clear search"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
             </div>
-            <div style={{ display: "flex", gap: "20px", margin: 30 }}>
-              <p>{cart.length} selected</p>
+
+            {/* =========================
+                CART CONTROLS
+            ========================= */}
+
+            <div className="cart-actions">
+
+              <div className="cart-count">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path
+                    d="M3 4H5L7.5 16H18L21 7H6"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+
+                  <circle
+                    cx="9"
+                    cy="20"
+                    r="1"
+                    fill="currentColor"
+                  />
+
+                  <circle
+                    cx="17"
+                    cy="20"
+                    r="1"
+                    fill="currentColor"
+                  />
+                </svg>
+
+                <span>
+                  {cart.length} selected
+                </span>
+              </div>
+
               <button
+                className="view-cart-btn"
                 disabled={cart.length === 0}
                 onClick={() => setRenderpage("third")}
               >
-                View
+                View cart
               </button>
+
               {cart.length > 0 && (
                 <button
+                  className="remove-all-btn"
                   onClick={() => setCart([])}
                 >
-                  Remove all  
+                  Remove all
                 </button>
               )}
             </div>
           </div>
-          <div className="products">
-            {pageproducts.map((product) => (
-              <div key={product.id}>
-                <img
-                  src={product.images[0]}
-                  width={100}
-                  height={100}
-                  alt={product.title}
-                  loading={lazy}
-                />
-                <h3>{product.title}</h3>
-                <p>{product.description}</p>
-                <p style={{ color: "blue" }}>
-                  <span style={{ color: "red", fontWeight: 600 }}>Price</span>:$
-                  {product.price}
-                </p>
+
+
+          {/* =========================
+              PRODUCT GRID
+          ========================= */}
+
+          {pageproducts.length > 0 ? (
+            <div className="products">
+
+              {pageproducts.map((product) => (
                 <div
-                  style={{
-                    display: "flex",
-                    gap: "10px",
-                    justifyContent: "center",
-                    margin: 7,
-                  }}
+                  className="product-card"
+                  key={product.id}
                 >
-                  <button
-                    style={{ color: "white", backgroundColor: "green" }}
-                    onClick={() => {
-                      (setRenderpage("second"), setSelectedProduct(product));
-                    }}
-                  >
-                    View Details
-                  </button>
-                  <button
-                    style={{ color: "white", backgroundColor: "green" }}
-                    onClick={() => {
-                      setCart([...cart, product]);
-                    }}
-                    disabled={cart.some((item) => item.id === product.id)}
-                  >
-                    Add to cart
-                  </button>
+
+                  {/* Product Image */}
+
+                  <div className="product-image-wrapper">
+
+                    <img
+                      src={product.images[0]}
+                      alt={product.title}
+                      loading="lazy"
+                      width={100}
+                      height={100}
+                    />
+
+                  </div>
+
+
+                  {/* Product Information */}
+
+                  <div className="product-content">
+
+                    <h3>
+                      {product.title}
+                    </h3>
+
+                    <p className="product-description">
+                      {product.description}
+                    </p>
+
+                    <div className="product-price">
+                      <span>Price</span>
+
+                      <strong>
+                        ${product.price}
+                      </strong>
+                    </div>
+
+                  </div>
+
+
+                  {/* Product Actions */}
+
+                  <div className="product-actions">
+
+                    <button
+                      className="details-btn"
+                      onClick={() => {
+                        setRenderpage("second");
+                        setSelectedProduct(product);
+                      }}
+                    >
+                      View Details
+                    </button>
+
+                    <button
+                      className="add-cart-btn"
+                      onClick={() => {
+                        setCart([...cart, product]);
+                      }}
+                      disabled={cart.some(
+                        (item) => item.id === product.id
+                      )}
+                    >
+                      {cart.some(
+                        (item) => item.id === product.id
+                      )
+                        ? "Added"
+                        : "Add to cart"}
+                    </button>
+
+                  </div>
+
                 </div>
+              ))}
+
+            </div>
+          ) : (
+            <div className="empty-products">
+              <div className="empty-icon">
+                🔎
               </div>
-            ))}
-          </div>
-          <div
-            style={{
-              display: "flex",
-              marginTop: "20px",
-              marginBottom: "20px",
-              alignitems: "center",
-              justifyContent: "center",
-              gap: "20px",
-            }}
-          >
-            <button
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage(currentPage - 1)}
-            >
-              Previous
-            </button>
-            <div style={{ display: "flex", gap: "10px" }}>
-              {/*{buttons}  line this we has to write using the for loop okay*/}
-              {Array.from({ length: totalpages }, (_, index) => index + 1).map(
-                (page) => (
+
+              <h3>
+                No products found
+              </h3>
+
+              <p>
+                Try searching with a different product name or price.
+              </p>
+            </div>
+          )}
+
+
+          {/* =========================
+              PAGINATION
+          ========================= */}
+
+          {totalpages > 0 && (
+            <div className="pagination">
+
+              <button
+                className="pagination-arrow"
+                disabled={currentPage === 1}
+                onClick={() =>
+                  setCurrentPage(currentPage - 1)
+                }
+              >
+                ←
+                <span>Previous</span>
+              </button>
+
+
+              <div className="page-numbers">
+
+                {Array.from(
+                  { length: totalpages },
+                  (_, index) => index + 1
+                ).map((page) => (
                   <button
                     key={page}
+                    className={
+                      currentPage === page
+                        ? "page-number active"
+                        : "page-number"
+                    }
                     disabled={currentPage === page}
-                    style={{
-                      color: currentPage === page ? "white" : "black",
-                      backgroundColor: currentPage === page ? "blue" : "grey",
-                    }}
-                    onClick={() => setCurrentPage(page)}
+                    onClick={() =>
+                      setCurrentPage(page)
+                    }
                   >
                     {page}
                   </button>
-                ),
-              )}
+                ))}
+
+              </div>
+
+
+              <button
+                className="pagination-arrow"
+                disabled={currentPage === totalpages}
+                onClick={() =>
+                  setCurrentPage(currentPage + 1)
+                }
+              >
+                <span>Next</span>
+                →
+              </button>
+
             </div>
-            <button
-              disabled={currentPage === totalpages}
-              onClick={() => setCurrentPage(currentPage + 1)}
-            >
-              Next
-            </button>
-          </div>
+          )}
+
         </div>
       )}
+
+
+      {/* =========================
+          PRODUCT DETAILS
+      ========================= */}
+
       {renderpage === "second" && (
         <Productdetails
           product={selectedproduct}
           onback={() => setRenderpage("first")}
         />
       )}
+
+
+      {/* =========================
+          CART
+      ========================= */}
+
       {renderpage === "third" && (
         <Cartitems
           items={cart}
           onBack={() => setRenderpage("first")}
           removefromcart={removefromcart}
-          onBuy={()=>setRenderpage("fourth")}
-        />  
+          onBuy={() => setRenderpage("fourth")}
+        />
       )}
+
+
+      {/* =========================
+          BUYING PAGE
+      ========================= */}
+
       {renderpage === "fourth" && (
         <Todolist
-        onBack={()=>setRenderpage("third")}
+          onBack={() => setRenderpage("third")}
         />
       )}
     </>

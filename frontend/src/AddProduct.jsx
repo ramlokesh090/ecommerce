@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import "./css/addproduct.css";
 
 export default function Addproduct({ onBack }) {
-  const {userId,token} = useSelector((state) => state.user);
+  const { userId, token } = useSelector((state) => state.user);
+
   const [productname, setProductName] = useState("");
   const [price, setPrice] = useState("");
   const [desc, setDesc] = useState("");
@@ -14,45 +16,60 @@ export default function Addproduct({ onBack }) {
   const [weight, setweight] = useState("");
   const [discount, setDiscount] = useState("");
   const [warrenty, setWarrenty] = useState("");
-  const [errors,setErrors]=useState({})
-  const validate=()=>{
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const validate = () => {
     const newErrors = {};
-    if(!productname.trim()){
-        newErrors.productname="productname is required"
+
+    if (!productname.trim()) {
+      newErrors.productname = "Product name is required";
     }
-    if(!price.trim()){
-        newErrors.price="price is required"
+
+    if (!price.trim()) {
+      newErrors.price = "Price is required";
     }
-    if(!desc.trim()){
-        newErrors.desc="description is required"
+
+    if (!desc.trim()) {
+      newErrors.desc = "Description is required";
     }
-    if(!image.trim()){
-        newErrors.image="image url is required"
+
+    if (!image.trim()) {
+      newErrors.image = "Image URL is required";
     }
-    if(category===null){
-        newErrors.category="category is required"
+
+    if (category === null) {
+      newErrors.category = "Category is required";
     }
-    if(!stock.trim()){
-        newErrors.stock="stock is required"
+
+    if (!stock.trim()) {
+      newErrors.stock = "Stock is required";
     }
-    if(!brand.trim()){
-        newErrors.brand="brand is required"
+
+    if (!brand.trim()) {
+      newErrors.brand = "Brand is required";
     }
-    if(!capacity.trim()){
-        newErrors.capacity="capacity is required"
+
+    if (!capacity.trim()) {
+      newErrors.capacity = "Capacity is required";
     }
-    if(!weight.trim()){
-        newErrors.weight="weight is required"
+
+    if (!weight.trim()) {
+      newErrors.weight = "Weight is required";
     }
-    if(!discount.trim()){
-        newErrors.discount="discount is required"
+
+    if (!discount.trim()) {
+      newErrors.discount = "Discount is required";
     }
-    if(!warrenty.trim()){
-        newErrors.warrenty="warrenty is required"
+
+    if (!warrenty.trim()) {
+      newErrors.warrenty = "Warranty is required";
     }
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
   const categories = [
     { id: 1, value: "Electronics" },
     { id: 2, value: "Fashion" },
@@ -66,77 +83,95 @@ export default function Addproduct({ onBack }) {
     { id: 10, value: "Groceries" },
     { id: 11, value: "others" },
   ];
+
   const handleSubmit = async () => {
-    if(!validate()){
-        return;
+    if (!validate()) {
+      return;
     }
+
+    setLoading(true);
+
     try {
-      const response = await fetch("https://ecommerce-1-ky2b.onrender.com/products", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization" : `Bearer ${token}`
+      const response = await fetch(
+        "https://ecommerce-1-ky2b.onrender.com/products",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            createdBy: Number(userId),
+            productName: productname,
+            description: desc,
+            imageUrl: image,
+            weight: Number(weight),
+            brand: brand,
+            category: category?.value,
+            amount: {
+              price: Number(price),
+              discount: Number(discount),
+            },
+            stock: {
+              totalStock: Number(stock),
+              capacity: Number(capacity),
+            },
+          }),
         },
-        body: JSON.stringify({
-          createdBy: Number(userId),
-          productName: productname,
-          description: desc,
-          imageUrl: image,
-          weight: Number(weight),
-          brand: brand,
-          category: category?.value,
-          amount: {
-            price: Number(price),
-            discount: Number(discount),
-          },
-          stock: {
-            totalStock: Number(stock),
-            capacity: Number(capacity),
-          },
-        }),
-      });
-      const response1=await response.json();
+      );
+
+      const response1 = await response.json();
+
       if (response1.statuscode === 201) {
-        alert("product Added succesfully");
+        alert("Product Added successfully");
         onBack();
-      }
-      else{
-        alert("product adding is failed")
+      } else {
+        alert("Product adding is failed");
       }
     } catch (error) {
       console.log(error);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
+
   return (
-    <div style={{ backgroundColor: "#9eb44e" }}>
-      <p
-        style={{
-          fontSize: "30px",
-          fontWeight: "bold",
-          padding: "10px",
-          color: "#051a20",
-        }}
-      >
-        ADD THE PRODUCT
-      </p>
+    <div className="add-product-page">
+      <div className="add-product-header">
+        <div>
+          <span className="add-product-eyebrow">PRODUCT MANAGEMENT</span>
+
+          <p className="add-product-title">Add Product</p>
+
+          <p className="add-product-subtitle">
+            Create a new product for your ecommerce catalog
+          </p>
+        </div>
+      </div>
+
       <div className="AddProduct">
         <div className="field">
           <label>
-            <span style={{ color: "red" }}>*</span>Product Name
+            <span>*</span>Product Name
           </label>
+
           <input
             placeholder="Enter ProductName"
             value={productname}
             onChange={(e) => setProductName(e.target.value)}
           />
+
           {errors.productname && <p className="errors">{errors.productname}</p>}
         </div>
+
         <div className="field">
           <label>
-            <span style={{ color: "red" }}>*</span>Price
+            <span>*</span>Price
           </label>
+
           <input
-          type="number"
+            type="number"
             placeholder="Enter Price"
             value={price}
             onChange={(e) => {
@@ -144,34 +179,43 @@ export default function Addproduct({ onBack }) {
               setPrice(value);
             }}
           />
+
           {errors.price && <p className="errors">{errors.price}</p>}
         </div>
+
         <div className="field field-position">
           <label>
-            <span style={{ color: "red" }}>*</span>Product Description
+            <span>*</span>Product Description
           </label>
+
           <textarea
             placeholder="Enter Product description"
             value={desc}
             onChange={(e) => setDesc(e.target.value)}
           />
+
           {errors.desc && <p className="errors">{errors.desc}</p>}
         </div>
+
         <div className="field">
           <label>
-            <span style={{ color: "red" }}>*</span>Image URL
+            <span>*</span>Image URL
           </label>
+
           <input
             placeholder="Enter image url"
             value={image}
             onChange={(e) => setImage(e.target.value)}
           />
+
           {errors.image && <p className="errors">{errors.image}</p>}
         </div>
+
         <div className="field">
           <label>
-            <span style={{ color: "red" }}>*</span>Category
+            <span>*</span>Category
           </label>
+
           <select
             value={category?.id || ""}
             onChange={(e) => {
@@ -182,104 +226,141 @@ export default function Addproduct({ onBack }) {
               );
             }}
           >
-            {category === null &&(
-            <option value="">select category</option>
-            )}
+            {category === null && <option value="">Select category</option>}
+
             {categories.map((categorys) => (
               <option key={categorys.id} value={categorys.id}>
                 {categorys.value}
               </option>
             ))}
           </select>
+
           {errors.category && <p className="errors">{errors.category}</p>}
         </div>
+
         <div className="field">
           <label>
-            <span style={{ color: "red" }}>*</span>stock
+            <span>*</span>Stock
           </label>
-          <input            
+
+          <input
             type="number"
             placeholder="Enter stock"
             value={stock}
             onChange={(e) => {
               const value = e.target.value.replace(/\D/g, "");
-              if (value.length <= 5) setStock(value);
+
+              if (value.length <= 5) {
+                setStock(value);
+              }
             }}
           />
+
           {errors.stock && <p className="errors">{errors.stock}</p>}
         </div>
+
         <div className="field">
           <label>
-            <span style={{ color: "red" }}>*</span>Brand
+            <span>*</span>Brand
           </label>
+
           <input
             type="text"
             placeholder="Enter brand"
             value={brand}
             onChange={(e) => setBrand(e.target.value)}
           />
+
           {errors.brand && <p className="errors">{errors.brand}</p>}
         </div>
+
         <div className="field">
           <label>
-            <span style={{ color: "red" }}>*</span>Minimum order capacity
+            <span>*</span>Minimum order capacity
           </label>
+
           <input
-            type="number"            
+            type="number"
             placeholder="Enter stock capacity"
             value={capacity}
             onChange={(e) => {
               const value = e.target.value.replace(/\D/g, "");
-              if (value.length <= 5) setCapacity(value);
+
+              if (value.length <= 5) {
+                setCapacity(value);
+              }
             }}
           />
+
           {errors.capacity && <p className="errors">{errors.capacity}</p>}
         </div>
+
         <div className="field">
           <label>
-            <span style={{ color: "red" }}>*</span>Weight
+            <span>*</span>Weight
           </label>
-          <input            
-           type="number"
+
+          <input
+            type="number"
             placeholder="Enter Weight"
             value={weight}
             onChange={(e) => {
               const value = e.target.value.replace(/\D/g, "");
-              if (value.length <= 5) setweight(value);
+
+              if (value.length <= 5) {
+                setweight(value);
+              }
             }}
           />
+
           {errors.weight && <p className="errors">{errors.weight}</p>}
         </div>
+
         <div className="field">
           <label>
-            <span style={{ color: "red" }}>*</span>Discount Percentage
+            <span>*</span>Discount Percentage
           </label>
+
           <input
             type="number"
             placeholder="Enter Discount in percentage"
             value={discount}
             onChange={(e) => {
               const value = e.target.value.replace(/\D/g, "");
-              if (value.length <= 3 && Number(value) <= 100)
+
+              if (value.length <= 3 && Number(value) <= 100) {
                 setDiscount(value);
+              }
             }}
           />
+
           {errors.discount && <p className="errors">{errors.discount}</p>}
         </div>
+
         <div className="field">
           <label>
-            <span style={{ color: "red" }}>*</span>Warrenty
+            <span>*</span>Warrenty
           </label>
+
           <input
-             placeholder="Enter Warrenty"
+            placeholder="Enter Warrenty"
             value={warrenty}
             onChange={(e) => setWarrenty(e.target.value)}
           />
+
           {errors.warrenty && <p className="errors">{errors.warrenty}</p>}
         </div>
-        <div style={{ gridColumn: "-1/1", marginTop: "40px" }}>
-          <button className="button1" onClick={handleSubmit}>
-            Submit
+
+        <div className="add-product-actions">
+          <button className="button1" onClick={handleSubmit} disabled={loading}>
+            {loading ? (
+              <>
+                <span className="submit-spinner"></span>
+                Adding Product...
+              </>
+            ) : (
+              "Add Product"
+            )}
           </button>
         </div>
       </div>

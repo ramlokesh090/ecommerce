@@ -1,155 +1,246 @@
-import react, { useState } from "react";
-function Abc({ name, value }) {
+import "./css/productdetails.css";
+
+function InfoItem({ name, value }) {
   return (
-    <h4 style={{ justifyContent: "flex-start" }}>
-      <span style={{ color: "brown", justifyContent: "flex-start" }}>
-        {name}
-      </span>
-      : {value}
-    </h4>
+    <div className="info-item">
+      <span className="info-label">{name}</span>
+      <span className="info-value">{value}</span>
+    </div>
   );
 }
+
 function Card({ review }) {
   return (
-    <div className="card">
-      <p
-        style={{ color: "red", display: "flex", justifyContent: "flex-start" }}
-      >
-        Name : <span style={{ color: "white" }}>{review.reviewerName}</span>
-      </p>
-      <p
-        style={{ color: "red", display: "flex", justifyContent: "flex-start" }}
-      >
-        Email : <span style={{ color: "white" }}> {review.reviewerEmail}</span>
-      </p>
-      <p style={{ display: "flex" }}>
-        <p style={{ color: "red" }}>Rating :</p>
-        {Array.from({ length: review.rating }, (_, index) => index + 1).map(
-          (star) => (
-            <p
-              style={{
-                color: "gold",
-                fontSize: "20px",
-                margin: 0,
-                gap: "10px",
-              }}
-            >
-              ★
-            </p>
-          ),
-        )}
-      </p>
-      <p
-        style={{
-          color: "green",
-          fontSize: "30px",
-          justifyContent: "flex-start",
-        }}
-      >
-        {review.comment}
+    <div className="review-card">
+      <div className="review-user">
+        <div className="review-avatar">
+          {review.reviewerName?.charAt(0)?.toUpperCase()}
+        </div>
+
+        <div>
+          <p className="review-name">{review.reviewerName}</p>
+          <p className="review-email">{review.reviewerEmail}</p>
+        </div>
+      </div>
+
+      <div className="review-rating">
+        <span>Rating</span>
+
+        <div className="stars">
+          {Array.from(
+            { length: review.rating },
+            (_, index) => index + 1
+          ).map((star) => (
+            <span key={star}>★</span>
+          ))}
+        </div>
+      </div>
+
+      <p className="review-comment">
+        "{review.comment}"
       </p>
     </div>
   );
 }
+
 export default function Productdetails({ product, onback }) {
   const discountrate =
     product.price -
-    Math.floor((product.price * product.discountPercentage) / 100, 2);
+    Math.floor((product.price * product.discountPercentage) / 100);
+
   return (
-    <div>
-      <div>
-        <div >
-          <div style={{display:"flex",margin:10}}><button onClick={onback} cursor="pointer" >back</button></div>
-          <div style={{justifyContent:"center"}}>
-          <p style={{ color: "orange", fontSize: 40, marginTop: "20px" }}>
-            {product.title}
-          </p>
-          </div>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-          }}
-        >
-          <img
-            src={product.images[0]}
-            height={200}
-            width={200}
-            alt={product.title}
-          />
-          <div
-            style={{ margin: "50px", display: "flex", flexDirection: "column",gap:"30px" }}
-          >
-            {/* <img
-              src={product.meta.qrCode}
-              height={50}
-              width={50}
+    <div className="product-page">
+
+      {/* Back button */}
+      <div className="product-container">
+        <button className="back-button" onClick={onback}>
+          <span>←</span>
+          Back to Products
+        </button>
+      </div>
+
+      {/* Product Hero */}
+      <section className="product-container product-hero">
+
+        <div className="product-image-section">
+          <div className="image-glow"></div>
+
+          <div className="product-image-card">
+            <img
+              src={product.images[0]}
               alt={product.title}
+              loading="lazy"
             />
-            <button style={{backgroundColor:"blue",color:"white",height:"30px"}}>add to cart</button> */}
           </div>
         </div>
-        <p
-          style={{
-            display: "flex",
-            maxWidth: "75%",
-            textAlign: "center",
-            margin: "0 auto",
-          }}
-        >
-          {product.description}
-        </p>
-      </div>
-      <div className="details" style={{ marginTop: "20px" }}>
-        <div>
-          <Abc name="Category" value={product.category} />
-          {/* <h4 style={{justifyContent:"flex-start"}}>
-              <span style={{ color: "brown",justifyContent:"flex-start" }}>Price</span>: ${product.price}
-            </h4> */}
-          <Abc name="price" value={`$${product.price}`} />
-          <Abc
-            name="Discount Amount"
-            value={`$${Math.floor((product.price * product.discountPercentage) / 100, 2)}`}
-          />
-          <Abc name="Product Price" value={`$${discountrate}`} />
-          <Abc name="Rating" value={`${product.rating} stars`} />
-          <Abc name="Stock" value={`${product.stock}`} />
-          <Abc
-            name="Minimum order Quantity"
-            value={`${product.minimumOrderQuantity}`}
-          />
-        </div>
-        <div>
-          <Abc name="brand" value={product.brand} />
-          <Abc name="Weight" value={`${product.weight}kgs`} />
-          <Abc name="sku" value={product.sku} />
-          <Abc name="Warrenty" value={product.warrantyInformation} />
-          <Abc name="tags" value={product.tags.map((tag) => `${tag},`)} />
-          <Abc
-            name="dimensions"
-            value={`${product.dimensions.width},${product.dimensions.height},${product.dimensions.depth}(width,height,depth)`}
-          />
-          <Abc name="shipping info" value={product.shippingInformation} />
-        </div>
-      </div>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          flexDirection: "column",
-        }}
-      >
-        <h3 style={{ color: "indigo", fontSize: "30px", margin: 5 }}>
-          Reviews
-        </h3>
-        {product.reviews.map((review) => (
-          <div style={{ marginBottom: "5px", display: "flex" }}>
-            <Card review={review} />
+
+        <div className="product-summary">
+
+          <span className="product-category">
+            {product.category}
+          </span>
+
+          <h1>{product.title}</h1>
+
+          <p className="product-description">
+            {product.description}
+          </p>
+
+          <div className="price-section">
+            <div>
+              <span className="price-label">Current price</span>
+              <div className="current-price">
+                ${discountrate}
+              </div>
+            </div>
+
+            <div className="original-price">
+              ${product.price}
+            </div>
+
+            <div className="discount-badge">
+              {product.discountPercentage}% OFF
+            </div>
           </div>
-        ))}
-      </div>
+
+          <div className="quick-stats">
+
+            <div className="quick-stat">
+              <span className="stat-icon">★</span>
+              <div>
+                <strong>{product.rating}</strong>
+                <small>Rating</small>
+              </div>
+            </div>
+
+            <div className="quick-stat">
+              <span className="stat-icon">◉</span>
+              <div>
+                <strong>{product.stock}</strong>
+                <small>In stock</small>
+              </div>
+            </div>
+
+            <div className="quick-stat">
+              <span className="stat-icon">✓</span>
+              <div>
+                <strong>Secure</strong>
+                <small>Purchase</small>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* Product Information */}
+      <section className="product-container information-section">
+
+        <div className="section-heading">
+          <span className="section-number">01</span>
+
+          <div>
+            <p>PRODUCT INFORMATION</p>
+            <h2>Everything you need to know</h2>
+          </div>
+        </div>
+
+        <div className="details-grid">
+
+          <div className="details-card">
+            <h3>Product Details</h3>
+
+            <InfoItem
+              name="Category"
+              value={product.category}
+            />
+
+            <InfoItem
+              name="Brand"
+              value={product.brand}
+            />
+
+            <InfoItem
+              name="SKU"
+              value={product.sku}
+            />
+
+            <InfoItem
+              name="Weight"
+              value={`${product.weight} kgs`}
+            />
+
+            <InfoItem
+              name="Minimum Order"
+              value={product.minimumOrderQuantity}
+            />
+
+            <InfoItem
+              name="Stock"
+              value={product.stock}
+            />
+          </div>
+
+          <div className="details-card">
+            <h3>Shipping & Warranty</h3>
+
+            <InfoItem
+              name="Warranty"
+              value={product.warrantyInformation}
+            />
+
+            <InfoItem
+              name="Shipping"
+              value={product.shippingInformation}
+            />
+
+            <InfoItem
+              name="Dimensions"
+              value={`${product.dimensions.width} × ${product.dimensions.height} × ${product.dimensions.depth}`}
+            />
+
+            <InfoItem
+              name="Tags"
+              value={product.tags.join(", ")}
+            />
+
+            <InfoItem
+              name="Discount"
+              value={`${product.discountPercentage}%`}
+            />
+
+            <InfoItem
+              name="Final Price"
+              value={`$${discountrate}`}
+            />
+          </div>
+
+        </div>
+      </section>
+
+      {/* Reviews */}
+      <section className="product-container reviews-section">
+
+        <div className="section-heading">
+          <span className="section-number">02</span>
+
+          <div>
+            <p>CUSTOMER FEEDBACK</p>
+            <h2>What customers are saying</h2>
+          </div>
+        </div>
+
+        <div className="reviews-grid">
+          {product.reviews.map((review, index) => (
+            <Card
+              key={index}
+              review={review}
+            />
+          ))}
+        </div>
+
+      </section>
+
     </div>
   );
 }

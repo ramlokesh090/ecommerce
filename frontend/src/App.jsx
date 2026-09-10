@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 // import {Text} from "react";
-import "./App.css";
+import "./css/App.css";
 // import { ScrollView, View } from "react-native";
  import { useNavigate } from "react-router-dom";
 
