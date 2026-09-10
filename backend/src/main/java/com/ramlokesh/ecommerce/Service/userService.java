@@ -16,6 +16,7 @@ public class userService {
         Users users=new Users();
         String encodedpassword = config.passwordEncoder().encode(user.getPassword());
         users.setPassword(encodedpassword);
+
         users.setEmail(user.getEmail());
         users.setFirstName(user.getFirstName());
         users.setLastName(user.getLastName());
