@@ -86,10 +86,12 @@ package com.ramlokesh.ecommerce.config;
 
 import com.ramlokesh.ecommerce.Service.JWTService;
 import com.ramlokesh.ecommerce.Service.Myuserdetailservice;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -109,6 +111,7 @@ public class JWTFilter extends OncePerRequestFilter {
     @Autowired
     private JWTService jwtService;
 
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -116,56 +119,79 @@ public class JWTFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
+
         System.out.println("========== JWT FILTER ==========");
+
         System.out.println("METHOD: " + request.getMethod());
+
         System.out.println("URI: " + request.getRequestURI());
 
+
+        // Get Authorization header
         String authHeader = request.getHeader("Authorization");
 
         System.out.println("AUTH HEADER: " + authHeader);
 
-        // 1. Check whether Authorization header exists
+
+        // Check whether Authorization header exists
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
 
             System.out.println("NO BEARER TOKEN");
 
             filterChain.doFilter(request, response);
+
             return;
         }
 
-        // 2. Remove "Bearer " from the header
+
+        // Remove "Bearer " from the beginning
         String token = authHeader.substring(7);
 
         System.out.println("TOKEN RECEIVED");
 
+
         try {
 
-            // 3. Extract username/email from JWT
+            // Extract username/email from JWT
             String userName = jwtService.extractUsername(token);
 
-            System.out.println("USERNAME FROM TOKEN: " + userName);
+            System.out.println(
+                    "USERNAME FROM TOKEN: " + userName
+            );
 
-            // 4. Check that authentication has not already been created
+
+            // Check username and whether authentication is already present
             if (userName != null &&
-                    SecurityContextHolder.getContext().getAuthentication() == null) {
+                    SecurityContextHolder
+                            .getContext()
+                            .getAuthentication() == null) {
 
-                // 5. Find user from database
+
+                // Find user from database
                 UserDetails userDetails =
                         userservice.loadUserByUsername(userName);
 
                 System.out.println(
-                        "USER FOUND: " + userDetails.getUsername()
+                        "USER FOUND: " +
+                                userDetails.getUsername()
                 );
 
-                // 6. Validate JWT
-                boolean valid =
-                        jwtService.validateToken(token, userDetails);
 
-                System.out.println("TOKEN VALID: " + valid);
+                // Validate JWT
+                boolean valid =
+                        jwtService.validateToken(
+                                token,
+                                userDetails
+                        );
+
+                System.out.println(
+                        "TOKEN VALID: " + valid
+                );
+
 
                 if (valid) {
 
-                    // 7. Create authenticated object
+                    // Create Authentication object
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(
                                     userDetails,
@@ -173,16 +199,20 @@ public class JWTFilter extends OncePerRequestFilter {
                                     userDetails.getAuthorities()
                             );
 
-                    // 8. Attach request details
+
+                    // Add request details
                     authToken.setDetails(
                             new WebAuthenticationDetailsSource()
                                     .buildDetails(request)
                     );
 
-                    // 9. Tell Spring Security that user is authenticated
+
+                    // Tell Spring Security that
+                    // the request is authenticated
                     SecurityContextHolder
                             .getContext()
                             .setAuthentication(authToken);
+
 
                     System.out.println(
                             "AUTHENTICATION SET SUCCESSFULLY"
@@ -192,11 +222,15 @@ public class JWTFilter extends OncePerRequestFilter {
 
         } catch (Exception e) {
 
-            System.out.println("========== JWT ERROR ==========");
+            System.out.println(
+                    "========== JWT ERROR =========="
+            );
+
             e.printStackTrace();
         }
 
-        // 10. Continue to the next filter
+
+        // Continue to the next filter
         filterChain.doFilter(request, response);
     }
 }
