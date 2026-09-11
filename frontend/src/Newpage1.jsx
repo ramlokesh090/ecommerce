@@ -42,7 +42,7 @@ function Card({
                 title="Edit review"
                 onClick={() => {
                   setIseditMode(true);
-                  setReviewId(review.reviewID);
+                  setReviewId(review.reviewId);
                   setComment(review.comment);
                   setSelectedRating(review.rating);
                 }}
