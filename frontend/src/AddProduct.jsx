@@ -1,8 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import "./css/addproduct.css";
 
-export default function Addproduct({ onBack }) {
+export default function Addproduct({
+  onBack,
+  onuserback,
+  product,
+  isEditMode,
+  setIsEditMode,
+}) {
   const { userId, token } = useSelector((state) => state.user);
 
   const [productname, setProductName] = useState("");
@@ -35,7 +41,7 @@ export default function Addproduct({ onBack }) {
       newErrors.desc = "Description is required";
     }
 
-    if (!image) {
+    if (!image && !imagePreview) {
       newErrors.image = "Product image is required";
     }
 
@@ -73,7 +79,31 @@ export default function Addproduct({ onBack }) {
 
     return Object.keys(newErrors).length === 0;
   };
+  useEffect(() => {
+    if (isEditMode && product) {
+      setProductName(product.productName ?? "");
+      setPrice(String(product.amount?.price ?? ""));
+      setDesc(product.description ?? "");
 
+      setCategory(categories.find((c) => c.value === product.category) || null);
+
+      setStock(String(product.stock?.totalStock ?? ""));
+      setBrand(product.brand ?? "");
+      setCapacity(String(product.stock?.capacity ?? ""));
+      setweight(String(product.weight ?? ""));
+      setDiscount(String(product.amount?.discount ?? ""));
+      setWarrenty(product.warrenty ?? "");
+      setShipping(String(product.shipping ?? ""));
+
+      // Existing product image
+      setImage(null);
+      setImagePreview(
+        product.image
+          ? `data:${product.contentType};base64,${product.image}`
+          : "",
+      );
+    }
+  }, [isEditMode, product]);
   const categories = [
     { id: 1, value: "Electronics" },
     { id: 2, value: "Fashion" },
@@ -87,7 +117,26 @@ export default function Addproduct({ onBack }) {
     { id: 10, value: "Groceries" },
     { id: 11, value: "others" },
   ];
-
+  const reset = () => {
+    setProductName("");
+    setPrice("");
+    setDesc("");
+    setCategory(null);
+    setStock("");
+    setBrand("");
+    setCapacity("");
+    setweight("");
+    setDiscount("");
+    setWarrenty("");
+    setShipping("");
+    setImage(null);
+    setImagePreview("");
+  };
+  useEffect(() => {
+  if (!isEditMode) {
+    reset();
+  }
+}, [isEditMode]);
   const handleSubmit = async () => {
     if (!validate()) {
       return;
@@ -97,6 +146,7 @@ export default function Addproduct({ onBack }) {
     const formData = new FormData();
 
     const productdata = {
+      ...(isEditMode && { productId: product.productId }),
       createdBy: Number(userId),
       productName: productname,
       description: desc,
@@ -118,12 +168,14 @@ export default function Addproduct({ onBack }) {
       "product",
       new Blob([JSON.stringify(productdata)], { type: "application/json" }),
     );
-    formData.append("image", image);
+    if (image) {
+      formData.append("image", image);
+    }
     try {
       const response = await fetch(
         "https://ecommerce-1-ky2b.onrender.com/products",
         {
-          method: "POST",
+          method: isEditMode ? "PUT" : "POST",
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -133,11 +185,16 @@ export default function Addproduct({ onBack }) {
 
       const response1 = await response.json();
 
-      if (response1.statuscode === 201) {
-        alert("Product Added successfully");
-        onBack();
+      if (response1.statuscode === 201 || response1.statuscode === 204) {
+        alert(response1.Message);
+        isEditMode ? onuserback() : onBack();
+        setIsEditMode(false);
       } else {
-        alert("Product adding is failed");
+        {
+          isEditMode
+            ? alert("Product editing is failed")
+            : alert("Product adding is failed");
+        }
       }
     } catch (error) {
       console.log(error);
@@ -153,10 +210,14 @@ export default function Addproduct({ onBack }) {
         <div>
           <span className="add-product-eyebrow">PRODUCT MANAGEMENT</span>
 
-          <p className="add-product-title">Add Product</p>
+          <p className="add-product-title">
+            {isEditMode ? "Edit Product" : "Add Product"}
+          </p>
 
           <p className="add-product-subtitle">
-            Create a new product for your ecommerce catalog
+            {isEditMode
+              ? "Update your product information"
+              : "Create a new product for your ecommerce catalog"}
           </p>
         </div>
       </div>
@@ -371,7 +432,7 @@ export default function Addproduct({ onBack }) {
             <span>*</span> Product Image
           </label>
           <div className="image-upload-container">
-            {!image ? (
+            {!image && !imagePreview ? (
               <>
                 <input
                   id="product-image"
@@ -410,7 +471,7 @@ export default function Addproduct({ onBack }) {
                     <span>Click to browse from your device</span>
 
                     <small>
-                      PNG, JPG, JPEG or WEBP&nbsp; • &nbsp;Maximum 5 MB
+                      PNG, JPG, JPEG or WEBP &nbsp; • &nbsp; Maximum 5 MB
                     </small>
                   </div>
                 </label>
@@ -427,9 +488,19 @@ export default function Addproduct({ onBack }) {
                 </div>
 
                 <div className="file-details">
-                  <strong>{image.name}</strong>
+                  {image ? (
+                    <>
+                      <strong>{image.name}</strong>
 
-                  <span>{(image.size / 1024 / 1024).toFixed(2)} MB</span>
+                      <span>{(image.size / 1024 / 1024).toFixed(2)} MB</span>
+                    </>
+                  ) : (
+                    <>
+                      <strong>Current product image</strong>
+
+                      <span>Existing image</span>
+                    </>
+                  )}
                 </div>
 
                 <button
@@ -463,8 +534,12 @@ export default function Addproduct({ onBack }) {
             {loading ? (
               <>
                 <span className="submit-spinner"></span>
-                Adding Product...
+                <span>
+                  {isEditMode ? "Updating Product..." : "Adding Product..."}
+                </span>
               </>
+            ) : isEditMode ? (
+              "Update Product"
             ) : (
               "Add Product"
             )}

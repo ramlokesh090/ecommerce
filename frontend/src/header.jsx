@@ -3,10 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { clearUser } from "./store/loginstore";
 
-export default function Header({
-  activeTab = "home",
-  setActiveTab = "home",
-}) {
+export default function Header({ activeTab = "home", setActiveTab = "home" }) {
   const { userId, role } = useSelector((state) => state.user);
 
   const navigate = useNavigate();
@@ -23,12 +20,7 @@ export default function Header({
             {/* Brand */}
             <div className="enterprise-brand">
               <div className="brand-icon">
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
                   <path
                     d="M3 10.5L12 3L21 10.5V21H14.5V14.5H9.5V21H3V10.5Z"
                     stroke="currentColor"
@@ -53,12 +45,7 @@ export default function Header({
               onClick={() => setActiveTab("cart")}
               disabled={activeTab === "cart"}
             >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M6 7H18L19.5 21H4.5L6 7Z"
                   stroke="currentColor"
@@ -85,12 +72,7 @@ export default function Header({
                 onClick={() => setActiveTab("products")}
                 disabled={activeTab === "products"}
               >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                   <path
                     d="M12 5V19"
                     stroke="currentColor"
@@ -108,15 +90,66 @@ export default function Header({
                 <span>Add Product</span>
               </button>
             )}
-          </div>
+            {role.toLowerCase() === "admin" && (
+              <button
+                className={`nav-item ${
+                  activeTab === "userproducts" ? "nav-item-active" : ""
+                }`}
+                onClick={() => setActiveTab("userproducts")}
+                disabled={activeTab === "userproducts"}
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  {/* User */}
+                  <path
+                    d="M9 11C11.2091 11 13 9.20914 13 7C13 4.79086 11.2091 3 9 3C6.79086 3 5 4.79014 5 7C5 9.20914 6.79086 11 9 11Z"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
 
-          {/* Center Brand / Dashboard */}
-          <div className="header-center">
-            <div className="dashboard-title">
-              <span className="dashboard-dot"></span>
-              <span>Welcome To Dashboard</span>
-            </div>
-          </div>
+                  <path
+                    d="M3 21C3 17.6863 5.68629 15 9 15C10.4 15 11.68 15.48 12.68 16.28"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+
+                  {/* Product */}
+                  <path
+                    d="M16 13L21 15.5V20L16 22.5L11 20V15.5L16 13Z"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+
+                  <path
+                    d="M11 15.5L16 18L21 15.5"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+
+                  <path
+                    d="M16 18V22"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+
+                <span>User Products</span>
+              </button>
+            )}
+          </div>         
 
           {/* Right Section */}
           <div className="header-right">
@@ -135,12 +168,7 @@ export default function Header({
                   navigate("/login");
                 }}
               >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                   <path
                     d="M10 17L15 12L10 7"
                     stroke="currentColor"
@@ -175,12 +203,7 @@ export default function Header({
           {/* Left: Logo */}
           <div className="public-brand">
             <div className="public-brand-icon">
-              <svg
-                width="23"
-                height="23"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
+              <svg width="23" height="23" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M3 10.5L12 3L21 10.5V21H14.5V14.5H9.5V21H3V10.5Z"
                   stroke="currentColor"
@@ -212,12 +235,7 @@ export default function Header({
               title="Home"
               onClick={() => navigate("/")}
             >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M3 10.5L12 3L21 10.5V21H14.5V14.5H9.5V21H3V10.5Z"
                   stroke="currentColor"
