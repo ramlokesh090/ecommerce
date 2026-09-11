@@ -114,7 +114,7 @@ public class ProductService {
                     "product updated successfully"
             );
     }
-
+    @Transactional
     public DeleteProductResponse Deleteproduct(Long id) {
         repo.deleteById(id);
         stockRepo.deleteById(id);
