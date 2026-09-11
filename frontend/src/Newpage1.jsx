@@ -373,9 +373,8 @@ export default function Productdetails({ product, onback }) {
           <div className="section-heading">
             <span className="section-number">02</span>
 
-            <div>
-              <p>CUSTOMER FEEDBACK</p>
-              <h2>Customer Reviews</h2>
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              <p>CUSTOMER FEEDBACK <span style={{color: "#dc2626",fontSize:"12px",letterSpacing:"0.5px"}}>(you can't review your own product)</span></p>
             </div>
           </div>
           {userId !== product.createdBy && !alreadyReviewed && (
