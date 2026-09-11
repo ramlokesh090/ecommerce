@@ -12,40 +12,56 @@ public class reviewservice {
     reviewRepo repo;
 
     public addreviewResponse postreview(reviews reviews) {
+
         try {
-            reviews savedreview= repo.save(reviews);
-            if(reviews.getReviewID()== null) {
+
+            // Check BEFORE save()
+            boolean isUpdate = reviews.getReviewID() != null;
+
+            if (isUpdate) {
+
+                // UPDATE
+                if (!repo.existsById(reviews.getReviewID())) {
+                    return new addreviewResponse(
+                            reviews.getReviewID(),
+                            404,
+                            "review not found"
+                    );
+                }
+
+                reviews savedReview = repo.save(reviews);
+
                 return new addreviewResponse(
-                        savedreview.getReviewID(),
+                        savedReview.getReviewID(),
+                        200,
+                        "review updated successfully"
+                );
+
+            } else {
+
+                // CREATE
+                reviews savedReview = repo.save(reviews);
+
+                return new addreviewResponse(
+                        savedReview.getReviewID(),
                         201,
                         "review created successfully"
                 );
             }
-            else {
-                if(repo.existsById(reviews.getReviewID())) {
-                    return new addreviewResponse(
-                            reviews.getReviewID(),
-                            200,
-                            "review updated successfully"
-                    );
-                }
-                else{
-                    return new addreviewResponse(
-                            reviews.getReviewID(),
-                            404,
-                            "review updated successfully"
-                    );
-                }
-            }
-        }
-        catch (Exception e) {
-            if(reviews.getReviewID()== null) {
+
+        } catch (Exception e) {
+
+            if (reviews.getReviewID() == null) {
+
                 return new addreviewResponse(
                         null,
                         500,
                         "failed to create review"
                 );
+
             }
+
+
             return new addreviewResponse(
                     reviews.getReviewID(),
                     500,
