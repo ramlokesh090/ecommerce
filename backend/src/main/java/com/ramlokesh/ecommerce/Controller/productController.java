@@ -67,7 +67,7 @@ public class productController {
     @PutMapping(value="/products",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> Updateproduct(
             @RequestPart("product") productdto product,
-            @RequestPart("image") MultipartFile image
+            @RequestPart(value="image",required = false) MultipartFile image
     ){
         try {
             AddProductresponse response = service.Addproduct(product,image);
