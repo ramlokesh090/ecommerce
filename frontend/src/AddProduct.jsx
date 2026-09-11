@@ -8,7 +8,8 @@ export default function Addproduct({ onBack }) {
   const [productname, setProductName] = useState("");
   const [price, setPrice] = useState("");
   const [desc, setDesc] = useState("");
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
   const [category, setCategory] = useState(null);
   const [stock, setStock] = useState("");
   const [brand, setBrand] = useState("");
@@ -18,6 +19,7 @@ export default function Addproduct({ onBack }) {
   const [warrenty, setWarrenty] = useState("");
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [shipping, setShipping] = useState("");
   const validate = () => {
     const newErrors = {};
 
@@ -33,8 +35,8 @@ export default function Addproduct({ onBack }) {
       newErrors.desc = "Description is required";
     }
 
-    if (!image.trim()) {
-      newErrors.image = "Image URL is required";
+    if (!image) {
+      newErrors.image = "Product image is required";
     }
 
     if (category === null) {
@@ -64,7 +66,9 @@ export default function Addproduct({ onBack }) {
     if (!warrenty.trim()) {
       newErrors.warrenty = "Warranty is required";
     }
-
+    if (!shipping.trim()) {
+      newErrors.shipping = "Shipping time is required";
+    }
     setErrors(newErrors);
 
     return Object.keys(newErrors).length === 0;
@@ -90,33 +94,40 @@ export default function Addproduct({ onBack }) {
     }
 
     setLoading(true);
+    const formData = new FormData();
 
+    const productdata = {
+      createdBy: Number(userId),
+      productName: productname,
+      description: desc,
+      weight: Number(weight),
+      brand: brand,
+      category: category?.value,
+      shipping: Number(shipping),
+      warrenty: warrenty,
+      amount: {
+        price: Number(price),
+        discount: Number(discount),
+      },
+      stock: {
+        totalStock: Number(stock),
+        capacity: Number(capacity),
+      },
+    };
+    formData.append(
+      "product",
+      new Blob([JSON.stringify(productdata)], { type: "application/json" }),
+    );
+    formData.append("image", image);
     try {
       const response = await fetch(
         "https://ecommerce-1-ky2b.onrender.com/products",
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            createdBy: Number(userId),
-            productName: productname,
-            description: desc,
-            imageUrl: image,
-            weight: Number(weight),
-            brand: brand,
-            category: category?.value,
-            amount: {
-              price: Number(price),
-              discount: Number(discount),
-            },
-            stock: {
-              totalStock: Number(stock),
-              capacity: Number(capacity),
-            },
-          }),
+          body: formData,
         },
       );
 
@@ -195,20 +206,6 @@ export default function Addproduct({ onBack }) {
           />
 
           {errors.desc && <p className="errors">{errors.desc}</p>}
-        </div>
-
-        <div className="field">
-          <label>
-            <span>*</span>Image URL
-          </label>
-
-          <input
-            placeholder="Enter image url"
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
-          />
-
-          {errors.image && <p className="errors">{errors.image}</p>}
         </div>
 
         <div className="field">
@@ -350,7 +347,117 @@ export default function Addproduct({ onBack }) {
 
           {errors.warrenty && <p className="errors">{errors.warrenty}</p>}
         </div>
+        <div className="field">
+          <label>
+            <span>*</span>Shipping(in Days)
+          </label>
 
+          <input
+            type="number"
+            placeholder="Enter Shipping Time"
+            value={shipping}
+            onChange={(e) => {
+              const value = e.target.value.replace(/\D/g, "");
+              if (value.length <= 3) {
+                setShipping(value);
+              }
+            }}
+          />
+
+          {errors.shipping && <p className="errors">{errors.shipping}</p>}
+        </div>
+        <div className="field image-upload-field">
+          <label className="field-label">
+            <span>*</span> Product Image
+          </label>
+          <div className="image-upload-container">
+            {!image ? (
+              <>
+                <input
+                  id="product-image"
+                  className="hidden-file-input"
+                  type="file"
+                  accept="image/png,image/jpeg,image/jpg,image/webp"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+
+                    if (!file) return;
+
+                    if (file.size > 5 * 1024 * 1024) {
+                      setErrors((prev) => ({
+                        ...prev,
+                        image: "Image size must be less than 5 MB",
+                      }));
+                      return;
+                    }
+
+                    setImage(file);
+
+                    setErrors((prev) => ({
+                      ...prev,
+                      image: "",
+                    }));
+
+                    const previewUrl = URL.createObjectURL(file);
+                    setImagePreview(previewUrl);
+                  }}
+                />
+
+                <label htmlFor="product-image" className="upload-dropzone">
+                  <div className="upload-text">
+                    <strong>Upload product image</strong>
+
+                    <span>Click to browse from your device</span>
+
+                    <small>
+                      PNG, JPG, JPEG or WEBP&nbsp; • &nbsp;Maximum 5 MB
+                    </small>
+                  </div>
+                </label>
+              </>
+            ) : (
+              <div className="selected-file">
+                <div className="image-preview">
+                  <img
+                    src={imagePreview}
+                    alt="Product preview"
+                    width={100}
+                    height={100}
+                  />
+                </div>
+
+                <div className="file-details">
+                  <strong>{image.name}</strong>
+
+                  <span>{(image.size / 1024 / 1024).toFixed(2)} MB</span>
+                </div>
+
+                <button
+                  type="button"
+                  className="remove-file-btn"
+                  onClick={() => {
+                    setImage(null);
+                    setImagePreview("");
+
+                    const input = document.getElementById("product-image");
+
+                    if (input) {
+                      input.value = "";
+                    }
+
+                    setErrors((prev) => ({
+                      ...prev,
+                      image: "",
+                    }));
+                  }}
+                >
+                  Remove
+                </button>
+              </div>
+            )}
+          </div>
+          {errors.image && <p className="errors">{errors.image}</p>}
+        </div>
         <div className="add-product-actions">
           <button className="button1" onClick={handleSubmit} disabled={loading}>
             {loading ? (

@@ -12,18 +12,19 @@ function Def({ name, value }) {
 
 function Cartcard({ item, remove }) {
   const discountrate =
-    item.price - Math.floor((item.price * item.discountPercentage) / 100);
+    item.amount.price - Math.floor((item.amount.price * item.amount.discount) / 100);
 
   return (
     <article className="cart-product-card">
       {/* Product Image */}
       <div className="cart-product-image-wrapper">
         <img
-          src={item.images[0]}
-          alt={item.title}
-          className="cart-product-image"
-          loading="lazy"
-        />
+              src={`data:${item.contentType};base64,${item.image}`}
+              alt={item.productName}
+              loading="lazy"
+              width={100}
+              height={100}
+            />
       </div>
 
       {/* Product Information */}
@@ -34,18 +35,18 @@ function Cartcard({ item, remove }) {
           </span>
 
           <h2 className="cart-product-title">
-            {item.title}
+            {item.productName}
           </h2>
         </div>
 
         {/* Price */}
         <div className="cart-price-section">
-          {item.discountPercentage > 0 ? (
+          {item.amount.discount > 0 ? (
             <>
               <span className="cart-price-label">Price</span>
 
               <span className="cart-old-price">
-                ${item.price}
+                ${item.amount.price}
               </span>
 
               <span className="cart-current-price">
@@ -53,7 +54,7 @@ function Cartcard({ item, remove }) {
               </span>
 
               <span className="cart-discount">
-                {item.discountPercentage}% OFF
+                {item.amount.discount}% OFF
               </span>
             </>
           ) : (
@@ -61,7 +62,7 @@ function Cartcard({ item, remove }) {
               <span className="cart-price-label">Price</span>
 
               <span className="cart-current-price">
-                ${item.price}
+                ${item.amount.price}
               </span>
             </>
           )}
@@ -71,12 +72,12 @@ function Cartcard({ item, remove }) {
         <div className="cart-details-grid">
           <Def
             name="Warranty"
-            value={item.warrantyInformation}
+            value={item.warrenty}
           />
 
           <Def
             name="Rating"
-            value={`${item.rating}`}
+            value={`${5}`}
           />
 
           <Def
@@ -153,9 +154,9 @@ export default function Cartitems({
 
   for (const item of items) {
     const price =
-      item.price -
+      item.amount.price -
       Math.floor(
-        (item.price * item.discountPercentage) / 100
+        (item.amount.price * item.amount.discount) / 100
       );
 
     sum += price;

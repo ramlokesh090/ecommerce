@@ -1,8 +1,7 @@
-import { useState } from "react";
-import Newpage from "./Newpage";
+import { useState } from "react"
 import Header from "./header";
 import Addproduct from "./AddProduct";
-
+import Newpage from "./Newpage";
 export default function Dashboard() {
     const [activeTab, setActiveTab]=useState("cart");
     return(

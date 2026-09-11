@@ -18,22 +18,31 @@ export default function Newpage() {
   const lastindex = currentPage * rowperpage;
   const firstindex = lastindex - rowperpage;
 
-  const { userId, role } = useSelector((state) => state.user);
+  const { userId, role, token } = useSelector((state) => state.user);
 
   useEffect(() => {
     const getusers = async () => {
-      const response = await fetch("https://dummyjson.com/products");
+      const response = await fetch(
+        "https://ecommerce-1-ky2b.onrender.com/products",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
       const data = await response.json();
-      setproducts(data.products);
+      setproducts(data);
     };
 
     getusers();
-  }, []);
+  }, [token]);
 
   const filtereditems = products.filter((product) => {
     return (
-      product.title.toLowerCase().includes(search.toLowerCase()) ||
-      product.price.toString().includes(search.toLowerCase())
+      product.productName.toLowerCase().includes(search.toLowerCase()) ||
+      product.amount.price.toString().includes(search.toLowerCase())
     );
   });
 
@@ -42,7 +51,7 @@ export default function Newpage() {
   const totalpages = Math.ceil(filtereditems.length / rowperpage);
 
   const removefromcart = (product) => {
-    const updateCart = cart.filter((item) => item.id !== product.id);
+    const updateCart = cart.filter((item) => item.productId !== product.productId);
     setCart(updateCart);
   };
 
@@ -56,25 +65,16 @@ export default function Newpage() {
     <>
       {renderpage === "first" && (
         <div className="products-page">
-
           {/* =========================
               TOP CONTROL BAR
           ========================= */}
 
           <div className="products-toolbar">
-
             <div className="search-section">
-              <label htmlFor="product-search">
-                Search products
-              </label>
+              <label htmlFor="product-search">Search products</label>
 
               <div className="search-box">
-                <svg
-                  width="19"
-                  height="19"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none">
                   <circle
                     cx="11"
                     cy="11"
@@ -121,14 +121,8 @@ export default function Newpage() {
             ========================= */}
 
             <div className="cart-actions">
-
               <div className="cart-count">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                   <path
                     d="M3 4H5L7.5 16H18L21 7H6"
                     stroke="currentColor"
@@ -137,24 +131,12 @@ export default function Newpage() {
                     strokeLinejoin="round"
                   />
 
-                  <circle
-                    cx="9"
-                    cy="20"
-                    r="1"
-                    fill="currentColor"
-                  />
+                  <circle cx="9" cy="20" r="1" fill="currentColor" />
 
-                  <circle
-                    cx="17"
-                    cy="20"
-                    r="1"
-                    fill="currentColor"
-                  />
+                  <circle cx="17" cy="20" r="1" fill="currentColor" />
                 </svg>
 
-                <span>
-                  {cart.length} selected
-                </span>
+                <span>{cart.length} selected</span>
               </div>
 
               <button
@@ -166,16 +148,12 @@ export default function Newpage() {
               </button>
 
               {cart.length > 0 && (
-                <button
-                  className="remove-all-btn"
-                  onClick={() => setCart([])}
-                >
+                <button className="remove-all-btn" onClick={() => setCart([])}>
                   Remove all
                 </button>
               )}
             </div>
           </div>
-
 
           {/* =========================
               PRODUCT GRID
@@ -183,55 +161,37 @@ export default function Newpage() {
 
           {pageproducts.length > 0 ? (
             <div className="products">
-
               {pageproducts.map((product) => (
-                <div
-                  className="product-card"
-                  key={product.id}
-                >
-
+                <div className="product-card" key={product.id}>
                   {/* Product Image */}
 
                   <div className="product-image-wrapper">
-
                     <img
-                      src={product.images[0]}
-                      alt={product.title}
+                      src={`data:${product.contentType};base64,${product.image}`}
+                      alt={product.productName}
                       loading="lazy"
                       width={100}
                       height={100}
                     />
-
                   </div>
-
 
                   {/* Product Information */}
 
                   <div className="product-content">
+                    <h3>{product.title}</h3>
 
-                    <h3>
-                      {product.title}
-                    </h3>
-
-                    <p className="product-description">
-                      {product.description}
-                    </p>
+                    <p className="product-description">{product.description}</p>
 
                     <div className="product-price">
                       <span>Price</span>
 
-                      <strong>
-                        ${product.price}
-                      </strong>
+                      <strong>${product?.amount?.price}</strong>
                     </div>
-
                   </div>
-
 
                   {/* Product Actions */}
 
                   <div className="product-actions">
-
                     <button
                       className="details-btn"
                       onClick={() => {
@@ -247,39 +207,25 @@ export default function Newpage() {
                       onClick={() => {
                         setCart([...cart, product]);
                       }}
-                      disabled={cart.some(
-                        (item) => item.id === product.id
-                      )}
+                      disabled={cart.some((item) => item.productId === product.productId)}
                     >
-                      {cart.some(
-                        (item) => item.id === product.id
-                      )
+                      {cart.some((item) => item.productId === product.productId)
                         ? "Added"
                         : "Add to cart"}
                     </button>
-
                   </div>
-
                 </div>
               ))}
-
             </div>
           ) : (
             <div className="empty-products">
-              <div className="empty-icon">
-                🔎
-              </div>
+              <div className="empty-icon">🔎</div>
 
-              <h3>
-                No products found
-              </h3>
+              <h3>No products found</h3>
 
-              <p>
-                Try searching with a different product name or price.
-              </p>
+              <p>Try searching with a different product name or price.</p>
             </div>
           )}
-
 
           {/* =========================
               PAGINATION
@@ -287,24 +233,18 @@ export default function Newpage() {
 
           {totalpages > 0 && (
             <div className="pagination">
-
               <button
                 className="pagination-arrow"
                 disabled={currentPage === 1}
-                onClick={() =>
-                  setCurrentPage(currentPage - 1)
-                }
+                onClick={() => setCurrentPage(currentPage - 1)}
               >
-                ←
-                <span>Previous</span>
+                ←<span>Previous</span>
               </button>
 
-
               <div className="page-numbers">
-
                 {Array.from(
                   { length: totalpages },
-                  (_, index) => index + 1
+                  (_, index) => index + 1,
                 ).map((page) => (
                   <button
                     key={page}
@@ -314,34 +254,24 @@ export default function Newpage() {
                         : "page-number"
                     }
                     disabled={currentPage === page}
-                    onClick={() =>
-                      setCurrentPage(page)
-                    }
+                    onClick={() => setCurrentPage(page)}
                   >
                     {page}
                   </button>
                 ))}
-
               </div>
-
 
               <button
                 className="pagination-arrow"
                 disabled={currentPage === totalpages}
-                onClick={() =>
-                  setCurrentPage(currentPage + 1)
-                }
+                onClick={() => setCurrentPage(currentPage + 1)}
               >
-                <span>Next</span>
-                →
+                <span>Next</span>→
               </button>
-
             </div>
           )}
-
         </div>
       )}
-
 
       {/* =========================
           PRODUCT DETAILS
@@ -353,7 +283,6 @@ export default function Newpage() {
           onback={() => setRenderpage("first")}
         />
       )}
-
 
       {/* =========================
           CART
@@ -368,15 +297,12 @@ export default function Newpage() {
         />
       )}
 
-
       {/* =========================
           BUYING PAGE
       ========================= */}
 
       {renderpage === "fourth" && (
-        <Todolist
-          onBack={() => setRenderpage("third")}
-        />
+        <Todolist onBack={() => setRenderpage("third")} />
       )}
     </>
   );
