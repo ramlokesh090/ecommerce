@@ -55,27 +55,35 @@ public class ProductService {
         Long productId=savedproduct.getProductId();
         Long userId= savedproduct.getCreatedBy();
 
-        ProductImage productImage;
-        if(isNewProduct){
-            productImage = new ProductImage();
-        }
-        else{
-            productImage=imageRepo.findById(product.getProductId()).get();
-        }
-        byte[] imageBytes = image.getBytes();
-        System.out.println("================================");
-        System.out.println("IMAGE NAME: " + image.getOriginalFilename());
-        System.out.println("IMAGE TYPE: " + image.getContentType());
-        System.out.println("IMAGE SIZE: " + imageBytes.length);
-        System.out.println("IMAGE DATA JAVA TYPE: " + imageBytes.getClass());
-        System.out.println("PRODUCT ID: " + productId);
-        System.out.println("================================");
-        productImage.setProductId(productId);
-        productImage.setFileName(image.getOriginalFilename());
-        productImage.setContentType(image.getContentType());
-        productImage.setImageData(image.getBytes());
-        imageRepo.save(productImage);
+        if (isNewProduct) {
+            if (image == null || image.isEmpty()) {
+                throw new IllegalArgumentException("Product image is required");
+            }
+            ProductImage productImage = new ProductImage();
+            productImage.setProductId(productId);
+            productImage.setFileName(image.getOriginalFilename());
+            productImage.setContentType(image.getContentType());
+            productImage.setImageData(image.getBytes());
 
+            imageRepo.save(productImage);
+
+        } else {
+            if (image != null && !image.isEmpty()) {
+                ProductImage productImage = imageRepo
+                        .findById(productId)
+                        .orElseThrow(() ->
+                                new ProductNotFound(
+                                        "Product image not found for product ID: " + productId
+                                )
+                        );
+
+                productImage.setFileName(image.getOriginalFilename());
+                productImage.setContentType(image.getContentType());
+                productImage.setImageData(image.getBytes());
+
+                imageRepo.save(productImage);
+            }
+        }
         productAmount amount;
         if(isNewProduct){
             amount=new productAmount();
