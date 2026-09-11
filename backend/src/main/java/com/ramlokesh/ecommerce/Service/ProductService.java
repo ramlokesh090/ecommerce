@@ -62,6 +62,14 @@ public class ProductService {
         else{
             productImage=imageRepo.findById(product.getProductId()).get();
         }
+        byte[] imageBytes = image.getBytes();
+        System.out.println("================================");
+        System.out.println("IMAGE NAME: " + image.getOriginalFilename());
+        System.out.println("IMAGE TYPE: " + image.getContentType());
+        System.out.println("IMAGE SIZE: " + imageBytes.length);
+        System.out.println("IMAGE DATA JAVA TYPE: " + imageBytes.getClass());
+        System.out.println("PRODUCT ID: " + productId);
+        System.out.println("================================");
         productImage.setProductId(productId);
         productImage.setFileName(image.getOriginalFilename());
         productImage.setContentType(image.getContentType());
