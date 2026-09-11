@@ -11,11 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class productdto {
+public class GetProductdto {
     private Long productId;
     private Long createdBy;
     private String productName;
     private String description;
+    private String image;
+    private String contentType;
     private int weight;
     private String brand;
     private String category;
@@ -23,6 +25,4 @@ public class productdto {
     private String warrenty;
     private amountDto amount;
     private stockDto stock;
-
-
 }

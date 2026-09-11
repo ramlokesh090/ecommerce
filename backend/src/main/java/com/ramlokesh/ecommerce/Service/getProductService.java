@@ -8,6 +8,7 @@ import com.ramlokesh.ecommerce.Repository.products.ProductImageRepo;
 import com.ramlokesh.ecommerce.Repository.products.productAmountRepo;
 import com.ramlokesh.ecommerce.Repository.products.productStockrepo;
 import com.ramlokesh.ecommerce.Repository.products.productsRepo;
+import com.ramlokesh.ecommerce.dto.Addproduct.GetProductdto;
 import com.ramlokesh.ecommerce.dto.Addproduct.amountDto;
 import com.ramlokesh.ecommerce.dto.Addproduct.productdto;
 import com.ramlokesh.ecommerce.dto.Addproduct.stockDto;
@@ -28,7 +29,7 @@ public class getProductService {
     productStockrepo stockRepo;
     @Autowired
     ProductImageRepo imageRepo;
-    public List<productdto> getAllproducts() {
+    public List<GetProductdto> getAllproducts() {
         List<productdetails> products=repo.findAll();
         List<productAmount> amount=amountRepo.findAll();
         List<productStock> stock= stockRepo.findAll();
@@ -56,7 +57,7 @@ public class getProductService {
                         )));
         return products.stream()
                .map(product->{
-                return new productdto(
+                return new GetProductdto(
                       product.getProductId(),
                       product.getCreatedBy(),
                       product.getProductName(),
@@ -73,7 +74,7 @@ public class getProductService {
         );}).toList();
     }
 
-    public productdto getproductbyId( Long Id) {
+    public GetProductdto getproductbyId( Long Id) {
         productdetails product=repo.findById(Id).orElseThrow(()->
                  new ProductNotFound("product not found")
         );
@@ -86,7 +87,7 @@ public class getProductService {
         ProductImage Image=imageRepo.findById(Id).orElseThrow(()->
                 new ProductNotFound("Product not Found")
                 );
-        return new productdto(
+        return new GetProductdto(
                 product.getProductId(),
                 product.getCreatedBy(),
                 product.getProductName(),
@@ -109,7 +110,7 @@ public class getProductService {
         );
     }
 
-    public List<productdto> getproductsbyuserId(Long id) {
+    public List<GetProductdto> getproductsbyuserId(Long id) {
         List<productdetails> product=repo.findByCreatedBy(id).get();
         List<Long> productIds=product.stream()
                 .map(productdetails::getProductId)
@@ -131,7 +132,7 @@ public class getProductService {
                         )));
         return product.stream()
                 .map(prod->
-                        new productdto(
+                        new GetProductdto(
                                 prod.getProductId(),
                                 prod.getCreatedBy(),
                                 prod.getProductName(),

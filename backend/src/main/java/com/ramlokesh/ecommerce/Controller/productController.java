@@ -5,6 +5,7 @@ import com.ramlokesh.ecommerce.Service.ProductService;
 import com.ramlokesh.ecommerce.Service.getProductService;
 import com.ramlokesh.ecommerce.dto.Addproduct.AddProductresponse;
 import com.ramlokesh.ecommerce.dto.Addproduct.DeleteProductResponse;
+import com.ramlokesh.ecommerce.dto.Addproduct.GetProductdto;
 import com.ramlokesh.ecommerce.dto.Addproduct.productdto;
 import com.ramlokesh.ecommerce.exception.ProductNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,19 +31,22 @@ public class productController {
     getProductService getService;
 
     @PostMapping(value="/products",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> Addproduct(@ModelAttribute  productdto product, @RequestPart MultipartFile image) throws IOException {
+    public ResponseEntity<?> Addproduct(
+            @RequestPart("product") productdto product,
+            @RequestPart("image") MultipartFile image
+    ) throws IOException {
             AddProductresponse response = service.Addproduct(product,image);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     @GetMapping("/products")
-    public ResponseEntity<List<productdto>> getAllProducts(){
-        List<productdto> products = getService.getAllproducts();
+    public ResponseEntity<List<GetProductdto>> getAllProducts(){
+        List<GetProductdto> products = getService.getAllproducts();
         return ResponseEntity.status(HttpStatus.OK).body(products);
     }
     @GetMapping("/products/{id}")
     public ResponseEntity<?> getProductByID(@PathVariable Long id){ // "?" we have pass any type of response
         try {
-            productdto product = getService.getproductbyId(id);
+            GetProductdto product = getService.getproductbyId(id);
             return ResponseEntity.status(HttpStatus.OK).body(product);
         }
         catch(Exception e){
@@ -61,7 +65,10 @@ public class productController {
 //                .body(e.getMessage());
 //    }
     @PutMapping(value="/products",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> Updateproduct(@ModelAttribute  productdto product, @RequestPart MultipartFile image){
+    public ResponseEntity<?> Updateproduct(
+            @RequestPart("product") productdto product,
+            @RequestPart("image") MultipartFile image
+    ){
         try {
             AddProductresponse response = service.Addproduct(product,image);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
@@ -76,8 +83,8 @@ public class productController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
     @GetMapping("/products/userid/{id}")
-    public ResponseEntity<List<productdto>> getproductsbyuserid(@PathVariable Long id){
-        List<productdto> productsByUserId=getService.getproductsbyuserId(id);
+    public ResponseEntity<List<GetProductdto>> getproductsbyuserid(@PathVariable Long id){
+        List<GetProductdto> productsByUserId=getService.getproductsbyuserId(id);
         return  ResponseEntity.status(HttpStatus.OK).body(productsByUserId);
 
     }
